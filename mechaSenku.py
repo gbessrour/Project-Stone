@@ -37,7 +37,9 @@ async def on_message(message):
         filename = numbers_to_side(coin) + ".jpg"
         coinname = os.path.join('coin', filename)
         await message.channel.send('You got ' + numbers_to_side(coin), file=discord.File(coinname))
-        
+    # Error message
+    else:
+        await message.channel.send('Try again', file=discord.File('wrong.gif'))
 @client.event
 async def on_ready():
     print('Logged in as')
