@@ -22,17 +22,17 @@ async def on_message(message):
     if message.author == client.user:
         return
     # Simple welcome message
-    if message.content.startswith('!hello'):
+    elif message.content.startswith('!hello'):
         msg = 'Hello {0.author.mention}. How can Mecha Senku assist you today?'.format(message)
         await message.channel.send(msg)
     # Dice roll
-    if message.content.startswith('!dice'):
+    elif message.content.startswith('!dice'):
         dice = random.randint(1, 6)
         filename = "dice " + str(dice) + ".png"
         dicename = os.path.join('dice', filename)
         await message.channel.send('You rolled ' + str(dice), file=discord.File(dicename))
     # Coin flip
-    if message.content.startswith('!coin'):
+    elif message.content.startswith('!coin'):
         coin = random.randint(1,2)
         filename = numbers_to_side(coin) + ".jpg"
         coinname = os.path.join('coin', filename)
