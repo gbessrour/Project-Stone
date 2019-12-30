@@ -19,8 +19,7 @@ possible_responses = [
     'Definitely',
 ]
 # enter bot token here
-TOKEN = 'NjQ3NTcxMTE3NjE5NTQ0MTI1.XgGD-g.saiWOPdBx-9BlVhH8RkoYJVAo8M' 
-
+TOKEN = 
 client = discord.Client()
 
 @client.event
@@ -55,7 +54,7 @@ async def on_message(message):
     # Eight ball
     elif message.content.startswith('!8ball'):
         await message.channel.send(random.choice(possible_responses))
-        
+
 @client.event
 async def on_ready():
     print('Logged in as')
