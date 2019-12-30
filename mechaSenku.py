@@ -12,7 +12,7 @@ def numbers_to_side(argument):
 	} 
 	return switcher.get(argument, "nothing") 
 
-TOKEN =  # enter bot token here
+TOKEN =   # enter bot token here
 
 client = discord.Client()
 
@@ -37,9 +37,14 @@ async def on_message(message):
         filename = numbers_to_side(coin) + ".jpg"
         coinname = os.path.join('coin', filename)
         await message.channel.send('You got ' + numbers_to_side(coin), file=discord.File(coinname))
-    # Error message
-    else:
-        await message.channel.send('Try again', file=discord.File('wrong.gif'))
+    # Dad Jokes
+    elif (message.content.startswith('!I\'m')) or (message.content.startswith('!I am')):
+        if message.content.startswith('!I\'m'):
+            dadjoke = message.content.replace('!I\'m', '')
+        elif message.content.startswith('!I am'):
+            dadjoke = message.content.replace('!I am', '')
+        msg = 'Hi' + dadjoke + '. I\'m dad'
+        await message.channel.send(msg)
 @client.event
 async def on_ready():
     print('Logged in as')
@@ -47,4 +52,4 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-client.run(TOKEN)
+client.run(TOKEN) 
