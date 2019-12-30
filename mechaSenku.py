@@ -3,7 +3,6 @@ import discord
 import random
 import os
 
-# Functions
 # Function to convert number into coin side 
 def numbers_to_side(argument): 
 	switcher = { 
@@ -11,8 +10,16 @@ def numbers_to_side(argument):
 		2: "tails", 
 	} 
 	return switcher.get(argument, "nothing") 
-
-TOKEN =   # enter bot token here
+# 8-ball responses
+possible_responses = [
+    'That is a resounding no',
+    'It is not looking likely',
+    'Too hard to tell',
+    'It is quite possible',
+    'Definitely',
+]
+# enter bot token here
+TOKEN = 'NjQ3NTcxMTE3NjE5NTQ0MTI1.XgGD-g.saiWOPdBx-9BlVhH8RkoYJVAo8M' 
 
 client = discord.Client()
 
@@ -38,13 +45,17 @@ async def on_message(message):
         coinname = os.path.join('coin', filename)
         await message.channel.send('You got ' + numbers_to_side(coin), file=discord.File(coinname))
     # Dad Jokes
-    elif (message.content.startswith('!I\'m')) or (message.content.startswith('!I am')):
-        if message.content.startswith('!I\'m'):
-            dadjoke = message.content.replace('!I\'m', '')
-        elif message.content.startswith('!I am'):
-            dadjoke = message.content.replace('!I am', '')
-        msg = 'Hi' + dadjoke + '. I\'m dad'
+    elif (message.content.startswith('I\'m')) or (message.content.startswith('I am')):
+        if message.content.startswith('I\'m'):
+            dadjoke = message.content.replace('I\'m', '')
+        elif message.content.startswith('I am'):
+            dadjoke = message.content.replace('I am', '')
+        msg = 'Hi' + dadjoke + '. I\'m dad!'
         await message.channel.send(msg)
+    # Eight ball
+    elif message.content.startswith('!8ball'):
+        await message.channel.send(random.choice(possible_responses))
+        
 @client.event
 async def on_ready():
     print('Logged in as')
