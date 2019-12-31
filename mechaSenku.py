@@ -2,6 +2,11 @@
 import discord
 import random
 import os
+from pycoingecko import CoinGeckoAPI
+import re
+
+# Powered by CoinGecko API
+cg = CoinGeckoAPI()
 
 # Function to convert number into coin side 
 def numbers_to_side(argument): 
@@ -10,6 +15,7 @@ def numbers_to_side(argument):
 		2: "tails", 
 	} 
 	return switcher.get(argument, "nothing") 
+
 # 8-ball responses
 possible_responses = [
     'That is a resounding no',
@@ -18,8 +24,10 @@ possible_responses = [
     'It is quite possible',
     'Definitely',
 ]
+
 # enter bot token here
 TOKEN = 
+
 client = discord.Client()
 
 @client.event
@@ -53,7 +61,17 @@ async def on_message(message):
         await message.channel.send(msg)
     # Eight ball
     elif message.content.startswith('!8ball'):
-        await message.channel.send(random.choice(possible_responses))
+        if ('win' in message.content) and ('lottery' in message.content):
+            await message.channel.send('Statistically, the odds of winning are about 1 in 175 million so I would say no.')
+        else:
+            await message.channel.send(random.choice(possible_responses))
+    # Cryptocurrency price
+    elif message.content.startswith('!price'):
+        message_list = message.content.split()
+        crypto = message_list[message_list.index('!price') + 1]
+        result = str(cg.get_price(ids=crypto, vs_currencies='usd'))
+        price =  re.findall("\d+\.\d{1,2}", result)
+        await message.channel.send(crypto +" price is: $" + price[0])
 
 @client.event
 async def on_ready():
