@@ -26,7 +26,7 @@ possible_responses = [
 ]
 
 # enter bot token here
-TOKEN = 
+TOKEN = 'NjQ3NTcxMTE3NjE5NTQ0MTI1.Xgp3hw.6JFW0qxPjbE8AMUKD-5BDqZE6_s'
 
 client = discord.Client()
 
