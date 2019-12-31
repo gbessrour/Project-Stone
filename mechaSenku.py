@@ -25,9 +25,6 @@ possible_responses = [
     'Definitely',
 ]
 
-# enter bot token here
-TOKEN = 
-
 client = discord.Client()
 
 @client.event
@@ -80,4 +77,6 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-client.run(TOKEN) 
+if __name__ == '__main__':
+    import config
+    client.run(config.token)
