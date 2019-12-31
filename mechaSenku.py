@@ -69,7 +69,9 @@ async def on_message(message):
         result = str(cg.get_price(ids=crypto, vs_currencies='usd'))
         price =  re.findall(r"\d+\.\d{1,2}", result)
         await message.channel.send(crypto +" price is: $" + price[0])
-
+    # Confusion message
+    elif message.content == 'what' or message.content == 'wot' or message.content == 'wat':
+        await message.channel.send('what')
 @client.event
 async def on_ready():
     print('Logged in as')
