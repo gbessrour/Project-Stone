@@ -70,7 +70,7 @@ async def on_message(message):
         message_list = message.content.split()
         crypto = message_list[message_list.index('!price') + 1]
         result = str(cg.get_price(ids=crypto, vs_currencies='usd'))
-        price =  re.findall("\d+\.\d{1,2}", result)
+        price =  re.findall(r"\d+\.\d{1,2}", result)
         await message.channel.send(crypto +" price is: $" + price[0])
 
 @client.event
