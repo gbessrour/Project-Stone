@@ -23,7 +23,7 @@ possible_responses = [
     'Too hard to tell',
     'It is quite possible',
     'Definitely',
-    'Luis has the right to decide the answer to this question'
+    'Luis has the right to decide the answer to this question!'
 ]
 
 client = discord.Client()
