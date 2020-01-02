@@ -8,13 +8,13 @@ import re
 # Powered by CoinGecko API
 cg = CoinGeckoAPI()
 
-# Function to convert number into coin side 
-def numbers_to_side(argument): 
-	switcher = { 
-		1: "heads", 
-		2: "tails", 
-	} 
-	return switcher.get(argument, "nothing") 
+# Function to convert number into coin side
+def numbers_to_side(argument):
+	switcher = {
+		1: "heads",
+		2: "tails",
+	}
+	return switcher.get(argument, "nothing")
 
 # 8-ball responses
 possible_responses = [
