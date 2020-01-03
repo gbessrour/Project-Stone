@@ -4,9 +4,14 @@ import random
 import os
 from pycoingecko import CoinGeckoAPI
 import re
+from jikanpy import Jikan
+
 
 # Powered by CoinGecko API
 cg = CoinGeckoAPI()
+
+#Powered by Jikan Unofficial MAL Anime API
+jikan = Jikan()
 
 # Function to convert number into coin side
 def numbers_to_side(argument):
@@ -72,6 +77,18 @@ async def on_message(message):
         result = str(cg.get_price(ids=crypto, vs_currencies='usd'))
         price =  re.findall(r"\d+\.\d{1,2}", result)
         await message.channel.send(crypto +" price is: $" + price[0])
+    #Anime Search
+    elif message.content.startswith('!anime'):
+        anime_list = message.content.split()
+        param = anime_list[anime_list.index('!anime') + 1]
+        second_param = anime_list[anime_list.index('!anime') + 2]
+        if(param == 'name'):
+            result = jikan.search('anime', second_param)
+        elif(param == 'seasonal'):
+            third_param = anime_list[anime_list.index('!anime') + 3]
+            result = jikan.season(year= int(third_param), season= second_param)
+        await message.channel.send(result)
+
     # Confusion message
     elif message.content == 'what' or message.content == 'wot' or message.content == 'wat':
         await message.channel.send('what')
