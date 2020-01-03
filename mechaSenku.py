@@ -26,6 +26,8 @@ possible_responses = [
     'Luis has the right to decide the answer to this question!'
 ]
 
+token = os.environ['token']
+
 client = discord.Client()
 
 @client.event
@@ -82,6 +84,6 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-if __name__ == '__main__':
-    import config
-    client.run(config.token)
+# if __name__ == '__main__':
+#     import config
+client.run(token)
