@@ -84,6 +84,4 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-# if __name__ == '__main__':
-#     import config
 client.run(token)
