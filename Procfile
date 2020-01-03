@@ -1,1 +1,1 @@
-worker: python mechaSenku.py
+worker: python3 mechaSenku.py
