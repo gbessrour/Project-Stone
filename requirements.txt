@@ -4,7 +4,6 @@ django-heroku
 pycoingecko
 discord
 jikanpy
-bs4
-BeautifulSoup
+BeautifulSoup4
 urllib.request
 urlopen
