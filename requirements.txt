@@ -6,3 +6,4 @@ discord
 jikanpy
 BeautifulSoup4
 urllib
+urllib.request
