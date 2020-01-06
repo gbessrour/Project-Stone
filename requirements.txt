@@ -5,5 +5,4 @@ pycoingecko
 discord
 jikanpy
 BeautifulSoup4
-urllib.request
-urlopen
+urllib
