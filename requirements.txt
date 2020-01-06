@@ -5,4 +5,3 @@ pycoingecko
 discord
 jikanpy
 BeautifulSoup4
-urllib
