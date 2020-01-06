@@ -6,8 +6,7 @@ from pycoingecko import CoinGeckoAPI
 import re
 from jikanpy import Jikan
 from bs4 import BeautifulSoup
-from urllib.request import urlopen
-import urllib.request
+import urllib
 
 
 # Powered by CoinGecko API
