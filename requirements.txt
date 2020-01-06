@@ -4,3 +4,7 @@ django-heroku
 pycoingecko
 discord
 jikanpy
+bs4
+BeautifulSoup
+urllib.request
+urlopen
