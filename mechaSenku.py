@@ -5,6 +5,9 @@ import os
 from pycoingecko import CoinGeckoAPI
 import re
 from jikanpy import Jikan
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
+import urllib.request
 
 
 # Powered by CoinGecko API
@@ -13,6 +16,8 @@ cg = CoinGeckoAPI()
 #Powered by Jikan Unofficial MAL Anime API
 jikan = Jikan()
 
+# PubSub Url
+url = "http://arepublixchickentendersubsonsale.com"
 # Function to convert number into coin side
 def numbers_to_side(argument):
 	switcher = {
@@ -28,7 +33,6 @@ possible_responses = [
     'Too hard to tell',
     'It is quite possible',
     'Definitely',
-    'Luis has the right to decide the answer to this question!'
 ]
 
 token = os.environ['token']
@@ -90,10 +94,19 @@ async def on_message(message):
             third_param = anime_list[anime_list.index('!anime') + 3]
             result = jikan.season(year= int(third_param), season= second_param)
         await message.channel.send(result)
-
     # Confusion message
     elif message.content == 'what' or message.content == 'wot' or message.content == 'wat':
         await message.channel.send('what')
+    #PubSubs on sale or not
+    elif message.content.startswith('!pubsubs'):
+        req = urllib.request.Request(url)
+        resp = urllib.request.urlopen(req)
+        respData = str(resp.read())
+        if ('<!-- onsale:no -->') in respData:
+            answer = "Pub subs are NOT on sale :("
+        elif('<!-- onsale:yes -->') in respData:
+            answer = "Pub subs ARE on sale my dudes!!!"
+        await message.channel.send(answer)
 @client.event
 async def on_ready():
     print('Logged in as')
