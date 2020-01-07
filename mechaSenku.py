@@ -97,7 +97,7 @@ async def on_message(message):
     elif message.content == 'what' or message.content == 'wot' or message.content == 'wat':
         await message.channel.send('what')
     #PubSubs on sale or not
-    elif message.content.startswith('!pubsubs'):
+    elif message.content.startswith('!pubsub'):
         req = urllib.request.Request(url)
         resp = urllib.request.urlopen(req)
         respData = str(resp.read())
