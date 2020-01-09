@@ -59,13 +59,13 @@ async def on_message(message):
         coinname = os.path.join('coin', filename)
         await message.channel.send('You got ' + numbers_to_side(coin), file=discord.File(coinname))
     # Dad Jokes
-    elif (message.content.startswith('I\'m')) or (message.content.startswith('I am') or (message.content.startswith('Im'))):
-        if message.content.startswith('I\'m'):
-            dadjoke = message.content.replace('I\'m', '')
-        elif message.content.startswith('I am'):
-            dadjoke = message.content.replace('I am', '')
-        elif message.content.startswith('Im'):
-            dadjoke = message.content.replace('Im', '')
+    elif (message.content.startswith('I\'m ')) or (message.content.startswith('I am ') or (message.content.startswith('Im '))):
+        if message.content.startswith('I\'m '):
+            dadjoke = message.content.replace('I\'m ', '')
+        elif message.content.startswith('I am '):
+            dadjoke = message.content.replace('I am ', '')
+        elif message.content.startswith('Im '):
+            dadjoke = message.content.replace('Im ', '')
         msg = 'Hi' + dadjoke + '. I\'m dad!'
         await message.channel.send(msg)
     # Eight ball
