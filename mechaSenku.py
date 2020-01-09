@@ -95,6 +95,32 @@ async def on_message(message):
             answer = "Pub subs ARE on sale my dudes!!!"
             await message.channel.send(file=discord.File(os.path.join('Reacts', 'excited_deku.gif')))
         await message.channel.send(answer)
+    elif message.content.startswith('!anime'):
+        anime_list = message.content.split()
+        param = anime_list[anime_list.index('!anime') + 1]
+        second_param = str(anime_list[2:])
+        if(param == 'name'):
+            anime = jikan.search(search_type= 'anime', query= second_param)
+            data = json.dumps(anime)
+            loaded_data = json.loads(data)
+            anime_title = loaded_data['results'][0]['title']
+            year_released = str(loaded_data['results'][0]['start_date'])
+            synopsis = loaded_data['results'][0]['synopsis']            
+            url = loaded_data['results'][0]['url']
+            image_result = loaded_data['results'][0]['image_url']
+            episodes = loaded_data['results'][0]['episodes']
+            score = loaded_data['results'][0]['score']
+            embed = discord.Embed(title=str(anime_title), value=str(anime_title), inline=False)
+            embed.add_field(name="Score", value=score, inline=False)
+            embed.add_field(name="Synopsis", value=synopsis, inline=False)
+            embed.add_field(name="Number of Episdoes", value=episodes, inline=False)
+            embed.add_field(name="Year Released", value=year_released[0:4], inline=False)
+            embed.set_image(url=image_result)
+            embed.add_field(name="URL", value=url, inline=False)
+        elif(param == 'seasonal'):
+            third_param = anime_list[anime_list.index('!anime') + 3]
+            result = jikan.season(year= int(third_param), season= second_param)
+        await message.channel.send(embed=embed)
 @client.event
 async def on_ready():
     print('Logged in as')
