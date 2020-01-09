@@ -8,7 +8,6 @@ from jikanpy import Jikan
 from bs4 import BeautifulSoup
 import urllib
 
-
 # Powered by CoinGecko API
 cg = CoinGeckoAPI()
 
@@ -82,17 +81,6 @@ async def on_message(message):
         result = str(cg.get_price(ids=crypto, vs_currencies='usd'))
         price =  re.findall(r"\d+\.\d{1,2}", result)
         await message.channel.send(crypto +" price is: $" + price[0])
-    #Anime Search
-    elif message.content.startswith('!anime'):
-        anime_list = message.content.split()
-        param = anime_list[anime_list.index('!anime') + 1]
-        second_param = anime_list[anime_list.index('!anime') + 2]
-        if(param == 'name'):
-            result = jikan.search('anime', second_param)
-        elif(param == 'seasonal'):
-            third_param = anime_list[anime_list.index('!anime') + 3]
-            result = jikan.season(year= int(third_param), season= second_param)
-        await message.channel.send(result)
     # Confusion message
     elif message.content == 'what' or message.content == 'wot' or message.content == 'wat':
         await message.channel.send('what')
@@ -105,6 +93,7 @@ async def on_message(message):
             answer = "Pub subs are NOT on sale :("
         elif('<!-- onsale:yes -->') in respData:
             answer = "Pub subs ARE on sale my dudes!!!"
+            await message.send(file=discord.File(os.path.join('Reacts', 'excited_deku')))
         await message.channel.send(answer)
 @client.event
 async def on_ready():
