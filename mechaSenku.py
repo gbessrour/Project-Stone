@@ -93,7 +93,7 @@ async def on_message(message):
             answer = "Pub subs are NOT on sale :("
         elif('<!-- onsale:yes -->') in respData:
             answer = "Pub subs ARE on sale my dudes!!!"
-            await message.send(file=discord.File(os.path.join('Reacts', 'excited_deku.gif')))
+            await message.channel.send(file=discord.File(os.path.join('Reacts', 'excited_deku.gif')))
         await message.channel.send(answer)
 @client.event
 async def on_ready():
