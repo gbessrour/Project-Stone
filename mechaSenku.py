@@ -7,6 +7,7 @@ import re
 from jikanpy import Jikan
 from bs4 import BeautifulSoup
 import urllib
+import json
 
 # Powered by CoinGecko API
 cg = CoinGeckoAPI()
