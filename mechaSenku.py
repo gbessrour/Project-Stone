@@ -70,7 +70,7 @@ async def on_message(message):
             dadjoke = message.content.replace('I am ', '')
         elif message.content.startswith('Im '):
             dadjoke = message.content.replace('Im ', '')
-        msg = 'Hi' + dadjoke + '. I\'m dad!'
+        msg = 'Hi ' + dadjoke + '. I\'m dad!'
         await message.channel.send(msg)
 
     # Eight ball
