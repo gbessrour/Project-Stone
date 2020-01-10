@@ -143,6 +143,12 @@ async def on_message(message):
             result = jikan.season(year= int(third_param), season= second_param)
         await message.channel.send(embed=embed)
 
+    # JoJo Reference?
+    if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower()
+        await message.channel.send('Was that a motherfucking JoJo\'s reference??')
+        if message.author.id = 386230029169852419
+            await message.channel.send('btw Ghassen, you should watch JoJo\'s')
+
 @client.event
 async def on_ready():
     print('Logged in as')
