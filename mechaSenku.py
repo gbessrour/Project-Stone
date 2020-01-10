@@ -15,8 +15,8 @@ cg = CoinGeckoAPI()
 #Powered by Jikan Unofficial MAL Anime API
 jikan = Jikan()
 
-# # PubSub Url
-# url = "http://arepublixchickentendersubsonsale.com"
+#Token
+token = 'NjQ3NTcxMTE3NjE5NTQ0MTI1.Xhf9yw.i2t34eIm9nqMwJXq6F0pGnmjrHE'
 
 # Function to convert number into coin side
 def numbers_to_side(argument):
@@ -35,7 +35,7 @@ possible_responses = [
     'Definitely',
 ]
 
-token = os.environ['token']
+# token = os.environ['token']
 
 client = discord.Client()
 
@@ -48,8 +48,8 @@ async def on_message(message):
 
     # Simple welcome message
     elif message.content.startswith('!hello'):
-        str = 'Hello {0.author.mention}. How can Mecha Senku assist you today?'.format(message)
-        await message.channel.send(str)
+        msg = 'Hello {0.author.mention}. How can Mecha Senku assist you today?'.format(message)
+        await message.channel.send(msg)
 
     # Dice roll
     elif message.content.startswith('!dice'):
@@ -97,7 +97,7 @@ async def on_message(message):
 
     #PubSubs on sale or not
     elif message.content.startswith('!pubsub'):
-        req = urllib.request.Request("http://arepublixchickentendersubsonsale.com")
+        req = urllib.request.Request('http://arepublixchickentendersubsonsale.com')
         resp = urllib.request.urlopen(req)
         respData = str(resp.read())
         if ('<!-- onsale:no -->') in respData:
