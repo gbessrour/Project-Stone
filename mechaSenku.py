@@ -37,7 +37,7 @@ greetings = [
     'Hi ',
     'Hi there ',
     'Hello ',
-    'Hey '
+    'Hey ',
     'Hey there ',
     'Hola ',
     'Nice to meet you ',
