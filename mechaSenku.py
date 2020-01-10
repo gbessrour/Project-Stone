@@ -47,7 +47,8 @@ async def on_message(message):
 
     # Simple welcome message
     elif message.content.startswith('!hello'):
-        hello_message(message)
+        str = 'Hello {0.author.mention}. How can Mecha Senku assist you today?'.format(msg)
+        await message.channel.send(str)
 
     # Dice roll
     elif message.content.startswith('!dice'):
@@ -132,10 +133,6 @@ async def on_message(message):
             third_param = anime_list[anime_list.index('!anime') + 3]
             result = jikan.season(year= int(third_param), season= second_param)
         await message.channel.send(embed=embed)
-
-def hello_message(msg):
-    str = 'Hello {0.author.mention}. How can Mecha Senku assist you today?'.format(msg)
-    await message.channel.send(str)
 
 @client.event
 async def on_ready():
