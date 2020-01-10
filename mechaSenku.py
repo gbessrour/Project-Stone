@@ -89,7 +89,7 @@ async def on_message(message):
         await message.channel.send(crypto +" price is: $" + price[0])
 
     # Confusion message
-    elif message.content == 'what' or message.content == 'wot' or message.content == 'wat' or message.content =='nani':
+    elif message.content.lower() == 'what' or message.content.lower() == 'wot' or message.content.lower() == 'wat' or message.content.lower() =='nani':
         await message.channel.send(message.content)
 
     #PubSubs on sale or not
