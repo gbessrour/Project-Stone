@@ -15,8 +15,9 @@ cg = CoinGeckoAPI()
 #Powered by Jikan Unofficial MAL Anime API
 jikan = Jikan()
 
-# PubSub Url
-url = "http://arepublixchickentendersubsonsale.com"
+# # PubSub Url
+# url = "http://arepublixchickentendersubsonsale.com"
+
 # Function to convert number into coin side
 def numbers_to_side(argument):
     switcher = {
@@ -96,7 +97,7 @@ async def on_message(message):
 
     #PubSubs on sale or not
     elif message.content.startswith('!pubsub'):
-        req = urllib.request.Request(url)
+        req = urllib.request.Request("http://arepublixchickentendersubsonsale.com")
         resp = urllib.request.urlopen(req)
         respData = str(resp.read())
         if ('<!-- onsale:no -->') in respData:
