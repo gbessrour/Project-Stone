@@ -135,7 +135,7 @@ async def on_message(message):
 
 def hello_message(msg):
     str = 'Hello {0.author.mention}. How can Mecha Senku assist you today?'.format(msg)
-        await message.channel.send(str)
+    await message.channel.send(str)
 
 @client.event
 async def on_ready():
