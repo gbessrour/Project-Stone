@@ -32,6 +32,17 @@ possible_responses = [
     'Definitely',
 ]
 
+# Greetings
+greetings = [
+    'Hi ',
+    'Hi there ',
+    'Hello ',
+    'Hey '
+    'Hey there ',
+    'Hola ',
+    'Nice to meet you ',
+]
+
 token = os.environ['token']
 
 client = discord.Client()
@@ -70,7 +81,7 @@ async def on_message(message):
             dadjoke = message.content.replace('I am ', '')
         elif message.content.startswith('Im '):
             dadjoke = message.content.replace('Im ', '')
-        msg = 'Hi ' + dadjoke + '. I\'m dad!'
+        msg = random.choice(greetings) + dadjoke + '. I\'m dad!'
         await message.channel.send(msg)
 
     # Eight ball
