@@ -47,7 +47,7 @@ async def on_message(message):
 
     # Simple welcome message
     elif message.content.startswith('!hello'):
-        str = 'Hello {0.author.mention}. How can Mecha Senku assist you today?'.format(msg)
+        str = 'Hello {0.author.mention}. How can Mecha Senku assist you today?'.format(message)
         await message.channel.send(str)
 
     # Dice roll
