@@ -15,9 +15,6 @@ cg = CoinGeckoAPI()
 #Powered by Jikan Unofficial MAL Anime API
 jikan = Jikan()
 
-#Token
-token = 'NjQ3NTcxMTE3NjE5NTQ0MTI1.Xhf9yw.i2t34eIm9nqMwJXq6F0pGnmjrHE'
-
 # Function to convert number into coin side
 def numbers_to_side(argument):
     switcher = {
@@ -35,7 +32,7 @@ possible_responses = [
     'Definitely',
 ]
 
-# token = os.environ['token']
+token = os.environ['token']
 
 client = discord.Client()
 
