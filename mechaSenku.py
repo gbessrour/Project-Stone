@@ -148,6 +148,9 @@ async def on_message(message):
         await message.channel.send('Was that a motherfucking JoJo\'s reference??')
         if message.author.id == 386230029169852419:
             await message.channel.send('btw Ghassen, you should watch JoJo\'s')
+    if ('You thought it' in message.content) and ('but' in message.content):
+        await message.channel.send(file=discord.File(os.path.join('Reacts', 'dio.gif')))
+
 
 @client.event
 async def on_ready():
