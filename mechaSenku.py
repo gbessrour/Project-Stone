@@ -63,19 +63,20 @@ async def dice(ctx):
     dicename = os.path.join('dice', filename)
     await ctx.send('You rolled ' + str(dice), file=discord.File(dicename))
 
+# Coin flip
+@bot.command(pass_context=True)
+async def coin(ctx):
+    coin = random.randint(1,2)
+    filename = numbers_to_side(coin) + ".jpg"
+    coinname = os.path.join('coin', filename)
+    await ctx.send('You got ' + numbers_to_side(coin), file=discord.File(coinname))
+
 @bot.event
 async def on_message(message):
 
     # we do not want the bot to reply to itself
     if message.author == bot.user:
         return
-
-    # Coin flip
-    elif message.content.startswith('!coin'):
-        coin = random.randint(1,2)
-        filename = numbers_to_side(coin) + ".jpg"
-        coinname = os.path.join('coin', filename)
-        await message.channel.send('You got ' + numbers_to_side(coin), file=discord.File(coinname))
 
     # Dad Jokes
     elif (message.content.startswith('I\'m ')) or (message.content.startswith('I am ') or (message.content.startswith('Im '))):
