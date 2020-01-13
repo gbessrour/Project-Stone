@@ -100,7 +100,7 @@ async def pubsub(ctx):
         answer = "Pub subs ARE on sale my dudes!!!"
         await ctx.send(file=discord.File(os.path.join('Reacts', 'excited_deku.gif')))
     await ctx.send(answer)
-    
+
 @bot.event
 async def on_message(message):
 
@@ -119,29 +119,9 @@ async def on_message(message):
         msg = random.choice(greetings) + dadjoke + '. I\'m dad!'
         await message.channel.send(msg)
 
-    # Cryptocurrency price
-    elif message.content.startswith('!price'):
-        message_list = message.content.split()
-        crypto = message_list[message_list.index('!price') + 1]
-        result = str(cg.get_price(ids=crypto, vs_currencies='usd'))
-        price =  re.findall(r"\d+\.\d{1,2}", result)
-        await message.channel.send(crypto +" price is: $" + price[0])
-
     # Confusion message
     elif message.content.lower() == 'what' or message.content.lower() == 'wot' or message.content.lower() == 'wat' or message.content.lower() =='nani':
         await message.channel.send(message.content)
-
-    #PubSubs on sale or not
-    elif message.content.startswith('!pubsub'):
-        req = urllib.request.Request('http://arepublixchickentendersubsonsale.com')
-        resp = urllib.request.urlopen(req)
-        respData = str(resp.read())
-        if ('<!-- onsale:no -->') in respData:
-            answer = "Pub subs are NOT on sale :("
-        elif('<!-- onsale:yes -->') in respData:
-            answer = "Pub subs ARE on sale my dudes!!!"
-            await message.channel.send(file=discord.File(os.path.join('Reacts', 'excited_deku.gif')))
-        await message.channel.send(answer)
     
     #Anime
     elif message.content.startswith('!anime'):
