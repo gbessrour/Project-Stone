@@ -154,6 +154,7 @@ async def on_message(message):
     if ('You thought it' in message.content) and ('but' in message.content):
         await message.channel.send(file=discord.File(os.path.join('Reacts', 'dio.gif')))
 
+    await bot.process_commands(message)
 
 @bot.event
 async def on_ready():
