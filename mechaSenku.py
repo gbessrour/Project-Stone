@@ -55,19 +55,20 @@ async def hello(ctx):
     msg = 'Hello {0.mention}. How can Mecha Senku assist you today?'.format(ctx.message.author)
     await ctx.send(msg)
 
+# Dice roll
+@bot.command(pass_context=True)
+async def dice(ctx):
+    dice = random.randint(1, 6)
+    filename = "dice " + str(dice) + ".png"
+    dicename = os.path.join('dice', filename)
+    await ctx.send('You rolled ' + str(dice), file=discord.File(dicename))
+
 @bot.event
 async def on_message(message):
 
     # we do not want the bot to reply to itself
     if message.author == bot.user:
         return
-
-    # Dice roll
-    elif message.content.startswith('!dice'):
-        dice = random.randint(1, 6)
-        filename = "dice " + str(dice) + ".png"
-        dicename = os.path.join('dice', filename)
-        await message.channel.send('You rolled ' + str(dice), file=discord.File(dicename))
 
     # Coin flip
     elif message.content.startswith('!coin'):
