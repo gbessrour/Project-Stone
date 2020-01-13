@@ -46,22 +46,16 @@ greetings = [
 
 token = os.environ['token']
 
-#client = discord.Client()
-bot = commands.Bot(command_prefix = '!')
-
-# Simple welcome message
-@bot.command(pass_context=True)
-async def hello(ctx):
-    msg = 'Hello {0.mention}. How can Mecha Senku assist you today?'.format(ctx.message.author)
-    await ctx.send(msg)
-
 @bot.event
 async def on_message(message):
 
     # we do not want the bot to reply to itself
     if message.author == bot.user:
         return
-
+    
+    elif message.content.startswith('!hello'):
+        msg = 'Hello {0.mention}. How can Mecha Senku assist you today?'.format(message)
+        await message.channel.send(msg)
     # Dice roll
     elif message.content.startswith('!dice'):
         dice = random.randint(1, 6)
