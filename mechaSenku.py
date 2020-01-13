@@ -141,9 +141,9 @@ async def on_message(message):
             embed.add_field(name="Year Released", value=year_released[0:4], inline=False)
             embed.set_image(url=image_result)
             embed.add_field(name="URL", value=url, inline=False)
-        elif(param == 'seasonal'):
-            third_param = anime_list[anime_list.index('!anime') + 3]
-            result = jikan.season(year= int(third_param), season= second_param)
+        # elif(param == 'seasonal'):
+        #     third_param = anime_list[anime_list.index('!anime') + 3]
+        #     result = jikan.season(year= int(third_param), season= second_param)
         await message.channel.send(embed=embed)
 
     # JoJo Reference?
