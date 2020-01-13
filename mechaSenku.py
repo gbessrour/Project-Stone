@@ -79,6 +79,28 @@ async def eight_ball(ctx):
     else:
         await ctx.send(random.choice(possible_responses))
 
+# Cryptocurrency price
+@bot.command(pass_context=True)
+async def price(ctx):
+    message_list = ctx.message.content.split()
+    crypto = message_list[message_list.index('!price') + 1]
+    result = str(cg.get_price(ids=crypto, vs_currencies='usd'))
+    price =  re.findall(r"\d+\.\d{1,2}", result)
+    await ctx.send(crypto +" price is: $" + price[0])
+
+# PubSubs on sale or not
+@bot.command(pass_context=True)
+async def pubsub(ctx):
+    req = urllib.request.Request('http://arepublixchickentendersubsonsale.com')
+    resp = urllib.request.urlopen(req)
+    respData = str(resp.read())
+    if ('<!-- onsale:no -->') in respData:
+        answer = "Pub subs are NOT on sale :("
+    elif('<!-- onsale:yes -->') in respData:
+        answer = "Pub subs ARE on sale my dudes!!!"
+        await ctx.send(file=discord.File(os.path.join('Reacts', 'excited_deku.gif')))
+    await ctx.send(answer)
+    
 @bot.event
 async def on_message(message):
 
