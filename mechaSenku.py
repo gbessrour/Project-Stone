@@ -71,6 +71,14 @@ async def coin(ctx):
     coinname = os.path.join('coin', filename)
     await ctx.send('You got ' + numbers_to_side(coin), file=discord.File(coinname))
 
+# Eight ball
+@bot.command(pass_context=True, aliases=['8ball'])
+async def eight_ball(ctx):
+    if ('win' in ctx.message.content) and ('lottery' in ctx.message.content):
+        await ctx.send('Statistically, the odds of winning are about 1 in 175 million so I would say no.')
+    else:
+        await ctx.send(random.choice(possible_responses))
+
 @bot.event
 async def on_message(message):
 
@@ -88,13 +96,6 @@ async def on_message(message):
             dadjoke = message.content.replace('Im ', '')
         msg = random.choice(greetings) + dadjoke + '. I\'m dad!'
         await message.channel.send(msg)
-
-    # Eight ball
-    elif message.content.startswith('!8ball'):
-        if ('win' in message.content) and ('lottery' in message.content):
-            await message.channel.send('Statistically, the odds of winning are about 1 in 175 million so I would say no.')
-        else:
-            await message.channel.send(random.choice(possible_responses))
 
     # Cryptocurrency price
     elif message.content.startswith('!price'):
