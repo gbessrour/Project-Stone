@@ -1,5 +1,6 @@
 # Work with Python 3.6
 import discord
+from discord.ext import commands
 import random
 import os
 from pycoingecko import CoinGeckoAPI
@@ -45,19 +46,21 @@ greetings = [
 
 token = os.environ['token']
 
-client = discord.Client()
+#client = discord.Client()
+bot = commands.Bot(command_prefix = '!')
 
-@client.event
+# Simple welcome message
+@bot.command(pass_context=True)
+async def hello(ctx):
+    msg = 'Hello {0.mention}. How can Mecha Senku assist you today?'.format(ctx.message.author)
+    await ctx.send(msg)
+
+@bot.event
 async def on_message(message):
 
     # we do not want the bot to reply to itself
-    if message.author == client.user:
+    if message.author == bot.user:
         return
-
-    # Simple welcome message
-    elif message.content.startswith('!hello'):
-        msg = 'Hello {0.author.mention}. How can Mecha Senku assist you today?'.format(message)
-        await message.channel.send(msg)
 
     # Dice roll
     elif message.content.startswith('!dice'):
@@ -152,11 +155,11 @@ async def on_message(message):
         await message.channel.send(file=discord.File(os.path.join('Reacts', 'dio.gif')))
 
 
-@client.event
+@bot.event
 async def on_ready():
     print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
+    print(bot.user.name)
+    print(bot.user.id)
     print('------')
 
-client.run(token)
+bot.run(token)
