@@ -1,5 +1,6 @@
 # Work with Python 3.6
 import discord
+from discord.ext import commands
 import random
 import os
 from pycoingecko import CoinGeckoAPI
@@ -15,8 +16,6 @@ cg = CoinGeckoAPI()
 #Powered by Jikan Unofficial MAL Anime API
 jikan = Jikan()
 
-# PubSub Url
-url = "http://arepublixchickentendersubsonsale.com"
 # Function to convert number into coin side
 def numbers_to_side(argument):
     switcher = {
@@ -34,34 +33,85 @@ possible_responses = [
     'Definitely',
 ]
 
+# Greetings
+greetings = [
+    'Hi ',
+    'Hi there ',
+    'Hello ',
+    'Hey ',
+    'Hey there ',
+    'Hola ',
+    'Nice to meet you ',
+]
+
 token = os.environ['token']
 
-client = discord.Client()
+#client = discord.Client()
+bot = commands.Bot(command_prefix = '!')
 
-@client.event
+# global variable
+dad_response = False
+
+# Simple welcome message
+@bot.command(pass_context=True)
+async def hello(ctx):
+    msg = 'Hello {0.mention}. How can Mecha Senku assist you today?'.format(ctx.message.author)
+    await ctx.send(msg)
+
+# Dice roll
+@bot.command(pass_context=True)
+async def dice(ctx):
+    dice = random.randint(1, 6)
+    filename = "dice " + str(dice) + ".png"
+    dicename = os.path.join('dice', filename)
+    await ctx.send('You rolled ' + str(dice), file=discord.File(dicename))
+
+# Coin flip
+@bot.command(pass_context=True)
+async def coin(ctx):
+    coin = random.randint(1,2)
+    filename = numbers_to_side(coin) + ".jpg"
+    coinname = os.path.join('coin', filename)
+    await ctx.send('You got ' + numbers_to_side(coin), file=discord.File(coinname))
+
+# Eight ball
+@bot.command(pass_context=True, aliases=['8ball'])
+async def eight_ball(ctx):
+    if ('win' in ctx.message.content) and ('lottery' in ctx.message.content):
+        await ctx.send('Statistically, the odds of winning are about 1 in 175 million so I would say no.')
+    else:
+        await ctx.send(random.choice(possible_responses))
+
+# Cryptocurrency price
+@bot.command(pass_context=True)
+async def price(ctx):
+    message_list = ctx.message.content.split()
+    crypto = message_list[message_list.index('!price') + 1]
+    result = str(cg.get_price(ids=crypto, vs_currencies='usd'))
+    price =  re.findall(r"\d+\.\d{1,2}", result)
+    await ctx.send(crypto +" price is: $" + price[0])
+
+# PubSubs on sale or not
+@bot.command(pass_context=True)
+async def pubsub(ctx):
+    req = urllib.request.Request('http://arepublixchickentendersubsonsale.com')
+    resp = urllib.request.urlopen(req)
+    respData = str(resp.read())
+    if ('<!-- onsale:no -->') in respData:
+        answer = "Pub subs are NOT on sale :("
+    elif('<!-- onsale:yes -->') in respData:
+        answer = "Pub subs ARE on sale my dudes!!!"
+        await ctx.send(file=discord.File(os.path.join('Reacts', 'excited_deku.gif')))
+    await ctx.send(answer)
+
+@bot.event
 async def on_message(message):
 
+    global dad_response
+
     # we do not want the bot to reply to itself
-    if message.author == client.user:
+    if message.author == bot.user:
         return
-
-    # Simple welcome message
-    elif message.content.startswith('!hello'):
-        hello_message(message)
-
-    # Dice roll
-    elif message.content.startswith('!dice'):
-        dice = random.randint(1, 6)
-        filename = "dice " + str(dice) + ".png"
-        dicename = os.path.join('dice', filename)
-        await message.channel.send('You rolled ' + str(dice), file=discord.File(dicename))
-
-    # Coin flip
-    elif message.content.startswith('!coin'):
-        coin = random.randint(1,2)
-        filename = numbers_to_side(coin) + ".jpg"
-        coinname = os.path.join('coin', filename)
-        await message.channel.send('You got ' + numbers_to_side(coin), file=discord.File(coinname))
 
     # Dad Jokes
     elif (message.content.startswith('I\'m ')) or (message.content.startswith('I am ') or (message.content.startswith('Im '))):
@@ -71,39 +121,21 @@ async def on_message(message):
             dadjoke = message.content.replace('I am ', '')
         elif message.content.startswith('Im '):
             dadjoke = message.content.replace('Im ', '')
-        msg = 'Hi' + dadjoke + '. I\'m dad!'
+        msg = random.choice(greetings) + dadjoke + '. I\'m dad!'
         await message.channel.send(msg)
-
-    # Eight ball
-    elif message.content.startswith('!8ball'):
-        if ('win' in message.content) and ('lottery' in message.content):
-            await message.channel.send('Statistically, the odds of winning are about 1 in 175 million so I would say no.')
-        else:
-            await message.channel.send(random.choice(possible_responses))
-
-    # Cryptocurrency price
-    elif message.content.startswith('!price'):
-        message_list = message.content.split()
-        crypto = message_list[message_list.index('!price') + 1]
-        result = str(cg.get_price(ids=crypto, vs_currencies='usd'))
-        price =  re.findall(r"\d+\.\d{1,2}", result)
-        await message.channel.send(crypto +" price is: $" + price[0])
+        dad_response = True
 
     # Confusion message
-    elif message.content == 'what' or message.content == 'wot' or message.content == 'wat' or message.content =='nani':
+    elif message.content.lower() == 'what' or message.content.lower() == 'wot' or message.content.lower() == 'wat' or message.content.lower() =='nani':
         await message.channel.send(message.content)
 
-    #PubSubs on sale or not
-    elif message.content.startswith('!pubsub'):
-        req = urllib.request.Request(url)
-        resp = urllib.request.urlopen(req)
-        respData = str(resp.read())
-        if ('<!-- onsale:no -->') in respData:
-            answer = "Pub subs are NOT on sale :("
-        elif('<!-- onsale:yes -->') in respData:
-            answer = "Pub subs ARE on sale my dudes!!!"
-            await message.channel.send(file=discord.File(os.path.join('Reacts', 'excited_deku.gif')))
-        await message.channel.send(answer)
+    # Dad joke response
+    elif dad_response == True and message.author != bot.user:
+        if 'fuck' in message.content.lower() or 'no ' in message.content.lower() or message.content.lower() == 'no':
+            await message.channel.send('no u')
+        elif 'thank' in message.content.lower():
+            await message.channel.send('You\'re welcome, ' + message.author.display_name)
+        dad_response = False
     
     #Anime
     elif message.content.startswith('!anime'):
@@ -133,15 +165,21 @@ async def on_message(message):
             result = jikan.season(year= int(third_param), season= second_param)
         await message.channel.send(embed=embed)
 
-def hello_message(msg):
-    str = 'Hello {0.author.mention}. How can Mecha Senku assist you today?'.format(msg)
-        await message.channel.send(str)
+    # JoJo Reference?
+    if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower():
+        await message.channel.send('Was that a motherfucking JoJo\'s reference??')
+        if message.author.id == 386230029169852419:
+            await message.channel.send('btw Ghassen, you should watch JoJo\'s')
+    if ('You thought it' in message.content) and ('but' in message.content):
+        await message.channel.send(file=discord.File(os.path.join('Reacts', 'dio.gif')))
 
-@client.event
+    await bot.process_commands(message)
+
+@bot.event
 async def on_ready():
     print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
+    print(bot.user.name)
+    print(bot.user.id)
     print('------')
 
-client.run(token)
+bot.run(token)
