@@ -96,6 +96,7 @@ async def pubsub(ctx):
     respData = str(resp.read())
     if ('<!-- onsale:no -->') in respData:
         answer = "Pub subs are NOT on sale :("
+        await ctx.send(file=discord.File(os.path.join('Reacts', 'sad_deku.gif')))
     elif('<!-- onsale:yes -->') in respData:
         answer = "Pub subs ARE on sale my dudes!!!"
         await ctx.send(file=discord.File(os.path.join('Reacts', 'excited_deku.gif')))
