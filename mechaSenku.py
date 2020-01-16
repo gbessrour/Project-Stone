@@ -109,6 +109,7 @@ async def anime(ctx):
     anime_list = ctx.message.content.split()
     param = anime_list[anime_list.index('!anime') + 1]
     second_param = str(anime_list[2:])
+
     if(param == 'name'):
         anime = jikan.search(search_type= 'anime', query= second_param)
         data = json.dumps(anime)
@@ -123,14 +124,52 @@ async def anime(ctx):
         embed = discord.Embed(title=str(anime_title), value=str(anime_title), inline=False)
         embed.add_field(name="Score", value=score, inline=False)
         embed.add_field(name="Synopsis", value=synopsis, inline=False)
-        embed.add_field(name="Number of Episdoes", value=episodes, inline=False)
+        embed.add_field(name="Number of Episodes", value=episodes, inline=False)
         embed.add_field(name="Year Released", value=year_released[0:4], inline=False)
         embed.set_image(url=image_result)
         embed.add_field(name="URL", value=url, inline=False)
-    elif(param == 'seasonal'):
-        third_param = anime_list[anime_list.index('!anime') + 3]
+        await ctx.send(embed=embed)
+    elif(param == 'season'):
+        second_param = anime_list[anime_list.index('!anime') + 2] #Remember to change this back to !anime in MechaSenku
+        third_param = anime_list[anime_list.index('!anime') + 3] #Remember to change this back to !anime in MechaSenku
+        
         result = jikan.season(year= int(third_param), season= second_param)
-    await ctx.send(embed=embed)
+        data = json.dumps(result)
+        loaded_data = json.loads(data)
+        
+        for i in range(0,5):
+            randNum = random.randint(0,len(loaded_data["anime"]))
+
+            #Skip showing animes that are continuing when asking about a specific season  
+            if loaded_data["anime"][randNum]["continuing"]:
+                continue 
+
+            anime_title = loaded_data["anime"][randNum]["title"]
+            anime_score = loaded_data["anime"][randNum]["score"]
+            anime_episodes = loaded_data["anime"][randNum]["episodes"]
+            anime_synopsis = loaded_data["anime"][randNum]["synopsis"]
+            image_result = loaded_data['anime'][randNum]['image_url']
+
+            embed = discord.Embed(title=anime_title, value=second_param +" "+ str(third_param), inline=False)
+            embed.add_field(name="Score",value=anime_score, inline=True)
+            embed.add_field(name="Number of Episodes",value=anime_episodes, inline=False)
+            
+            for j in range(0,len(loaded_data["anime"][randNum]["genres"])):
+                embed.add_field(name="Genre", value= loaded_data["anime"][randNum]["genres"][j]["name"], inline=True)            
+           
+            if len(anime_synopsis) > 1023:
+                embed.add_field(name="Synopsis",value=anime_synopsis[:1023], inline=False)
+            else:
+                embed.add_field(name="Synopsis",value=anime_synopsis, inline=False)   
+           
+            embed.set_image(url=image_result)
+            await ctx.send(embed=embed)
+
+# Manga search
+@bot.command(pass_context=True)
+async def manga(ctx):
+    await ctx.send("Manga Search coming next patch!!! :D")
+    
 
 @bot.event
 async def on_message(message):
