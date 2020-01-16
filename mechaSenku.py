@@ -49,6 +49,9 @@ token = os.environ['token']
 #client = discord.Client()
 bot = commands.Bot(command_prefix = '!')
 
+# global variable
+dad_response = False
+
 # Simple welcome message
 @bot.command(pass_context=True)
 async def hello(ctx):
@@ -101,9 +104,10 @@ async def pubsub(ctx):
         answer = "Pub subs ARE on sale my dudes!!!"
         await ctx.send(file=discord.File(os.path.join('Reacts', 'excited_deku.gif')))
     await ctx.send(answer)
-
+    
 @bot.event
 async def on_message(message):
+    global dad_response
     # we do not want the bot to reply to itself
     if message.author == bot.user:
         return
@@ -119,10 +123,20 @@ async def on_message(message):
         msg = random.choice(greetings) + dadjoke + '. I\'m dad!'
         await message.channel.send(msg)
 
+        dad_response = True
+        
     # Confusion message
     elif message.content.lower() == 'what' or message.content.lower() == 'wot' or message.content.lower() == 'wat' or message.content.lower() =='nani':
         await message.channel.send(message.content)
-    
+
+    # Dad joke response
+    elif dad_response == True and message.author != bot.user:
+        if 'fuck' in message.content.lower() or 'no ' in message.content.lower() or message.content.lower() == 'no':
+            await message.channel.send('no u')
+        elif 'thank' in message.content.lower():
+            await message.channel.send('You\'re welcome, ' + message.author.display_name)
+        dad_response = False
+        
     #Anime
     elif message.content.startswith('!anime'):
         anime_list = message.content.split()
