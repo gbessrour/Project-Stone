@@ -40,8 +40,6 @@ greetings = [
     'Hello ',
     'Hey ',
     'Hey there ',
-    'Hola ',
-    'Nice to meet you ',
 ]
 
 token = os.environ['token']
@@ -111,7 +109,6 @@ async def on_message(message):
     # we do not want the bot to reply to itself
     if message.author == bot.user:
         return
-
     # Dad Jokes
     elif (message.content.startswith('I\'m ')) or (message.content.startswith('I am ') or (message.content.startswith('Im '))):
         if message.content.startswith('I\'m '):
