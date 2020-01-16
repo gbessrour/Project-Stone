@@ -106,7 +106,7 @@ async def pubsub(ctx):
 # Anime search
 @bot.command(pass_context=True)
 async def anime(ctx):
-    anime_list = message.content.split()
+    anime_list = ctx.message.content.split()
     param = anime_list[anime_list.index('!anime') + 1]
     second_param = str(anime_list[2:])
     if(param == 'name'):
@@ -130,7 +130,7 @@ async def anime(ctx):
     elif(param == 'seasonal'):
         third_param = anime_list[anime_list.index('!anime') + 3]
         result = jikan.season(year= int(third_param), season= second_param)
-    await message.channel.send(embed=embed)
+    await ctx.send(embed=embed)
 
 @bot.event
 async def on_message(message):
