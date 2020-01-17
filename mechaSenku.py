@@ -132,6 +132,7 @@ async def anime(ctx):
     elif(param == 'season'):
         second_param = anime_list[anime_list.index('!anime') + 2] #Remember to change this back to !anime in MechaSenku
         third_param = anime_list[anime_list.index('!anime') + 3] #Remember to change this back to !anime in MechaSenku
+        #Little comment explaining that this try-except handles an IndexOutOfBoundsException
         try:
             fourth_param = anime_list[anime_list.index('!anime') + 4]
         except:
