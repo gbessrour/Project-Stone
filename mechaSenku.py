@@ -130,8 +130,8 @@ async def anime(ctx):
         embed.add_field(name="URL", value=url, inline=False)
         await ctx.send(embed=embed)
     elif(param == 'season'):
-        second_param = anime_list[anime_list.index('!anime') + 2] #Remember to change this back to !anime in MechaSenku
-        third_param = anime_list[anime_list.index('!anime') + 3] #Remember to change this back to !anime in MechaSenku
+        second_param = anime_list[anime_list.index('!anime') + 2] 
+        third_param = anime_list[anime_list.index('!anime') + 3] 
         #Little comment explaining that this try-except handles an IndexOutOfBoundsException
         try:
             fourth_param = anime_list[anime_list.index('!anime') + 4]
@@ -199,34 +199,6 @@ async def on_message(message):
         elif 'thank' in message.content.lower():
             await message.channel.send('You\'re welcome, ' + message.author.display_name)
         dad_response = False
-        
-    # #Anime
-    # elif message.content.startswith('!anime'):
-    #     anime_list = message.content.split()
-    #     param = anime_list[anime_list.index('!anime') + 1]
-    #     second_param = str(anime_list[2:])
-    #     if(param == 'name'):
-    #         anime = jikan.search(search_type= 'anime', query= second_param)
-    #         data = json.dumps(anime)
-    #         loaded_data = json.loads(data)
-    #         anime_title = loaded_data['results'][0]['title']
-    #         year_released = str(loaded_data['results'][0]['start_date'])
-    #         synopsis = loaded_data['results'][0]['synopsis']            
-    #         url = loaded_data['results'][0]['url']
-    #         image_result = loaded_data['results'][0]['image_url']
-    #         episodes = loaded_data['results'][0]['episodes']
-    #         score = loaded_data['results'][0]['score']
-    #         embed = discord.Embed(title=str(anime_title), value=str(anime_title), inline=False)
-    #         embed.add_field(name="Score", value=score, inline=False)
-    #         embed.add_field(name="Synopsis", value=synopsis, inline=False)
-    #         embed.add_field(name="Number of Episdoes", value=episodes, inline=False)
-    #         embed.add_field(name="Year Released", value=year_released[0:4], inline=False)
-    #         embed.set_image(url=image_result)
-    #         embed.add_field(name="URL", value=url, inline=False)
-    #     elif(param == 'seasonal'):
-    #         third_param = anime_list[anime_list.index('!anime') + 3]
-    #         result = jikan.season(year= int(third_param), season= second_param)
-    #     await message.channel.send(embed=embed)
 
     # JoJo Reference?
     if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower():
