@@ -90,7 +90,7 @@ async def price(ctx):
     await ctx.send(crypto +" price is: $" + price[0])
 
 # PubSubs on sale or not
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Checks if pubsubs are on sale or not')
 async def pubsub(ctx):
     req = urllib.request.Request('http://arepublixchickentendersubsonsale.com')
     resp = urllib.request.urlopen(req)
