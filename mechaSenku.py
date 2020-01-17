@@ -132,37 +132,31 @@ async def anime(ctx):
     elif(param == 'season'):
         second_param = anime_list[anime_list.index('!anime') + 2] #Remember to change this back to !anime in MechaSenku
         third_param = anime_list[anime_list.index('!anime') + 3] #Remember to change this back to !anime in MechaSenku
-        
+        try:
+            fourth_param = anime_list[anime_list.index('$anime') + 4]
+        except:
+            fourth_param = 5
+
         result = jikan.season(year= int(third_param), season= second_param)
         data = json.dumps(result)
         loaded_data = json.loads(data)
         
-        for i in range(0,5):
-            randNum = random.randint(0,len(loaded_data["anime"]))
+        for i in range(0,int(fourth_param)):
+            randNum = random.randint(0,(len(loaded_data["anime"])-1))
 
             #Skip showing animes that are continuing when asking about a specific season  
             if loaded_data["anime"][randNum]["continuing"]:
                 continue 
 
             anime_title = loaded_data["anime"][randNum]["title"]
-            anime_score = loaded_data["anime"][randNum]["score"]
-            anime_episodes = loaded_data["anime"][randNum]["episodes"]
-            anime_synopsis = loaded_data["anime"][randNum]["synopsis"]
-            image_result = loaded_data['anime'][randNum]['image_url']
+            url = loaded_data['anime'][randNum]['url']
 
             embed = discord.Embed(title=anime_title, value=second_param +" "+ str(third_param), inline=False)
-            embed.add_field(name="Score",value=anime_score, inline=True)
-            embed.add_field(name="Number of Episodes",value=anime_episodes, inline=False)
             
             for j in range(0,len(loaded_data["anime"][randNum]["genres"])):
                 embed.add_field(name="Genre", value= loaded_data["anime"][randNum]["genres"][j]["name"], inline=True)            
            
-            if len(anime_synopsis) > 1023:
-                embed.add_field(name="Synopsis",value=anime_synopsis[:1023], inline=False)
-            else:
-                embed.add_field(name="Synopsis",value=anime_synopsis, inline=False)   
-           
-            embed.set_image(url=image_result)
+            embed.add_field(name="MyAnimeList URL",value=url, inline=False)
             await ctx.send(embed=embed)
 
 # Manga search
