@@ -187,7 +187,10 @@ async def on_message(message):
         
     # Confusion message
     elif message.content.lower() == 'what' or message.content.lower() == 'wot' or message.content.lower() == 'wat' or message.content.lower() =='nani':
-        await message.channel.send(message.content)
+        if message.content.lower() =='nani':
+            await message.channel.send(file=discord.File(os.path.join('Reacts', 'nani.gif')))
+        else:
+            await message.channel.send(message.content)
 
     # Dad joke response
     elif dad_response == True and message.author != bot.user:
