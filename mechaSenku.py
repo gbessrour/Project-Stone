@@ -210,8 +210,6 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-#testing new script
-
 @bot.event
 async def on_ready():
     print('Logged in as')
