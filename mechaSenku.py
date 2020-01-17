@@ -132,6 +132,7 @@ async def anime(ctx):
     elif(param == 'season'):
         second_param = anime_list[anime_list.index('!anime') + 2] 
         third_param = anime_list[anime_list.index('!anime') + 3] 
+        #Little comment explaining that this try-except handles an IndexOutOfBoundsException
         try:
             fourth_param = anime_list[anime_list.index('!anime') + 4]
         except:
@@ -186,7 +187,10 @@ async def on_message(message):
         
     # Confusion message
     elif message.content.lower() == 'what' or message.content.lower() == 'wot' or message.content.lower() == 'wat' or message.content.lower() =='nani':
-        await message.channel.send(message.content)
+        if message.content.lower() =='nani':
+            await message.channel.send(file=discord.File(os.path.join('Reacts', 'nani.gif')))
+        else:
+            await message.channel.send(message.content)
 
     # Dad joke response
     elif dad_response == True and message.author != bot.user:
