@@ -1,5 +1,0 @@
-# Ignore upload script
-.upload.sh
-
-# Ignore Heroku logs script
-.heroku_logs.sh
