@@ -133,7 +133,7 @@ async def anime(ctx):
         second_param = anime_list[anime_list.index('!anime') + 2] #Remember to change this back to !anime in MechaSenku
         third_param = anime_list[anime_list.index('!anime') + 3] #Remember to change this back to !anime in MechaSenku
         try:
-            fourth_param = anime_list[anime_list.index('$anime') + 4]
+            fourth_param = anime_list[anime_list.index('!anime') + 4]
         except:
             fourth_param = 5
 
