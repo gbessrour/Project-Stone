@@ -51,7 +51,7 @@ bot = commands.Bot(command_prefix = '!')
 dad_response = False
 
 # Simple welcome message
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Greeting message')
 async def hello(ctx):
     msg = 'Hello {0.mention}. How can Mecha Senku assist you today?'.format(ctx.message.author)
     await ctx.send(msg)
@@ -161,7 +161,7 @@ async def anime(ctx):
             await ctx.send(embed=embed)
 
 # Manga search
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Does manga queries for you')
 async def manga(ctx):
     await ctx.send("Manga Search coming next patch!!! :D")
     
