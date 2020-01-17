@@ -57,7 +57,7 @@ async def hello(ctx):
     await ctx.send(msg)
 
 # Dice roll
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Roll a dice')
 async def dice(ctx):
     dice = random.randint(1, 6)
     filename = "dice " + str(dice) + ".png"
@@ -65,7 +65,7 @@ async def dice(ctx):
     await ctx.send('You rolled ' + str(dice), file=discord.File(dicename))
 
 # Coin flip
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Flip a coin')
 async def coin(ctx):
     coin = random.randint(1,2)
     filename = numbers_to_side(coin) + ".jpg"
@@ -73,7 +73,7 @@ async def coin(ctx):
     await ctx.send('You got ' + numbers_to_side(coin), file=discord.File(coinname))
 
 # Eight ball
-@bot.command(pass_context=True, aliases=['8ball'])
+@bot.command(pass_context=True, aliases=['8ball'], brief='Asks your question to an 8ball')
 async def eight_ball(ctx):
     if ('win' in ctx.message.content) and ('lottery' in ctx.message.content):
         await ctx.send('Statistically, the odds of winning are about 1 in 175 million so I would say no.')
@@ -81,7 +81,7 @@ async def eight_ball(ctx):
         await ctx.send(random.choice(possible_responses))
 
 # Cryptocurrency price
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Checks the price of cryptocurrency')
 async def price(ctx):
     message_list = ctx.message.content.split()
     crypto = message_list[message_list.index('!price') + 1]
@@ -104,7 +104,7 @@ async def pubsub(ctx):
     await ctx.send(answer)
 
 # Anime search
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Does anime queries for you', description='If you call !anime name [anime_name], it will return all the info about that anime.\nIf you call !anime season [season] [optional # of anime], it will return the specified number of anime from that season.')
 async def anime(ctx):
     anime_list = ctx.message.content.split()
     param = anime_list[anime_list.index('!anime') + 1]
