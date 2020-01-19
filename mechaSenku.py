@@ -163,7 +163,38 @@ async def anime(ctx):
 # Manga search
 @bot.command(pass_context=True, brief='Does manga queries for you')
 async def manga(ctx):
-    await ctx.send("Manga Search coming next patch!!! :D")
+    manga_list = ctx.message.content.split()
+    param = manga_list[manga_list.index('!manga') + 1] 
+    second_param = str(manga_list[2:])
+
+    if(param == 'name'):
+        manga = jikan.search(search_type= 'manga', query= second_param)
+        
+        data = json.dumps(manga)
+        loaded_data = json.loads(data)
+        manga_title = loaded_data['results'][0]['title']
+        year_released = str(loaded_data['results'][0]['start_date'])
+        synopsis = loaded_data['results'][0]['synopsis']            
+        url = loaded_data['results'][0]['url']
+        image_result = loaded_data['results'][0]['image_url']
+        score = loaded_data['results'][0]['score']
+        volumes = loaded_data['results'][0]['volumes']
+        chapters = loaded_data['results'][0]['chapters']
+        publishing = loaded_data['results'][0]['publishing']
+
+        embed = discord.Embed(title=str(manga_title), value=str(manga_title), inline=False)
+        embed.add_field(name="Score", value=score, inline=True)
+        if publishing:
+            embed.add_field(name="Status", value="Publishing", inline=True)
+        else:
+            embed.add_field(name="Number of Volumes", value=volumes, inline=True)
+            embed.add_field(name="Number of Chapters", value=chapters, inline=True)
+            embed.add_field(name="Status", value="Finished", inline=True)
+        embed.add_field(name="Year Released", value=year_released[0:4], inline=True)
+        embed.add_field(name="Synopsis", value=synopsis, inline=False)
+        embed.set_image(url=image_result)
+        embed.add_field(name="URL", value=url, inline=False)
+        await ctx.send(embed=embed)
     
 
 @bot.event
