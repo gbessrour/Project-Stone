@@ -195,6 +195,31 @@ async def manga(ctx):
         embed.set_image(url=image_result)
         embed.add_field(name="URL", value=url, inline=False)
         await ctx.send(embed=embed)
+
+@bot.command(pass_context=True)
+async def memetemplate(ctx):
+    link = 'https://api.imgflip.com/get_memes'
+    f = urllib.request.Request(link, headers={'User-agent': 'Mozilla/5.0'})
+    resp = urllib.request.urlopen(f)
+    data = resp.read().decode()
+    loaded_data = json.loads(data)
+    memeSize = len(loaded_data['data']['memes']) - 1
+    randNum = random.randint(0,memeSize)
+    meme_name = loaded_data['data']['memes'][randNum]['name']
+    meme_image = loaded_data['data']['memes'][randNum]['url']
+    embed = discord.Embed(title=meme_name, value=str(meme_name), inline=False)
+    embed.set_image(url=meme_image)
+    await ctx.send(embed=embed)
+
+@bot.command(pass_context=True)
+async def dadjoke(ctx):
+    link = 'https://icanhazdadjoke.com/'
+    f = urllib.request.Request(link, headers={'User-agent': 'Our Bot(https://github.com/gbessrour/project-stone)',"Accept":"application/json"})
+    resp = urllib.request.urlopen(f)
+    data = resp.read().decode()
+    loaded_data = json.loads(data)
+    joke = loaded_data['joke']
+    await ctx.send(joke)
     
 
 @bot.event
