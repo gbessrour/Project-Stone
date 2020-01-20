@@ -9,12 +9,16 @@ from jikanpy import Jikan
 from bs4 import BeautifulSoup
 import urllib
 import json
+import requests
 
 # Powered by CoinGecko API
 cg = CoinGeckoAPI()
 
 #Powered by Jikan Unofficial MAL Anime API
 jikan = Jikan()
+
+apikey = "TDI364KJY84L"  # API Key for Tenor API
+lmt = 50
 
 # Function to convert number into coin side
 def numbers_to_side(argument):
@@ -220,6 +224,31 @@ async def dadjoke(ctx):
     loaded_data = json.loads(data)
     joke = loaded_data['joke']
     await ctx.send(joke)
+
+
+@bot.command(pass_context=True)
+async def gif(ctx):
+    
+    global apikey
+    global lmt
+
+    message_list = ctx.message.content.split()
+    
+    search_term = message_list[1:]
+        
+    # get the top 8 GIFs for the search term
+    r = requests.get("https://api.tenor.com/v1/search?q=%s&key=%s&limit=%s" % (search_term, apikey, lmt))
+
+    if r.status_code == 200:
+    # load the GIFs using the urls for the smaller GIF sizes
+        top_gifs = json.loads(r.content)
+        gifArraySize = len( top_gifs['results']) - 1
+        randNum = random.randint(0,gifArraySize)
+
+        randomGif = top_gifs['results'][randNum]['media'][0]['gif']['url']
+        await ctx.send(randomGif)
+    else:
+        top_gifs = None
     
 
 @bot.event
