@@ -18,7 +18,7 @@ cg = CoinGeckoAPI()
 jikan = Jikan()
 
 apikey = "TDI364KJY84L"  # API Key for Tenor GIF API
-lmt = 50  # limit on the amount of content retrieved using Tenor GIF API
+lmt = 8  # limit on the amount of content retrieved using Tenor GIF API
 
 # Function to convert number into coin side
 def numbers_to_side(argument):
