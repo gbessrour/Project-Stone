@@ -268,9 +268,9 @@ async def numberfacts(ctx):
 
     response = requests.request("GET", url, headers=headers, params=querystring)
     data = json.loads(response.content)
-    if fact == 'year':
+    if factType == 'year':
         randomFact = "In "+ search_number + ", " + data['text']
-    elif fact == 'date':
+    elif factType == 'date':
         randomFact = "In " + search_number + "/"+ str(data['year']) +", " + data['text']
     else:
         randomFact = search_number + " is " + data['text']
