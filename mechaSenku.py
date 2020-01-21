@@ -249,6 +249,32 @@ async def gif(ctx):
         await ctx.send(randomGif)
     else:
         top_gifs = None
+
+
+@bot.command(pass_context=True)
+async def numberfacts(ctx):
+    message_list = ctx.message.content.split()
+    factType = message_list[1]
+    search_number = message_list[2]
+
+    url = "https://numbersapi.p.rapidapi.com/"+search_number+"/"+factType
+
+    querystring = {"fragment":"true","notfound":"floor","json":"true"}
+
+    headers = {
+        'x-rapidapi-host': "numbersapi.p.rapidapi.com",
+        'x-rapidapi-key': "6d91c9f439msh87c30494f5265adp18e8a7jsn6496e29a419a"
+        }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    data = json.loads(response.content)
+    if factType == 'year':
+        randomFact = "In "+ search_number + ", " + data['text']
+    elif factType == 'date':
+        randomFact = "In " + search_number + "/"+ str(data['year']) +", " + data['text']
+    else:
+        randomFact = search_number + " is " + data['text']
+    await ctx.send(randomFact)
     
 
 @bot.event
