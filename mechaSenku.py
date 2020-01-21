@@ -251,7 +251,7 @@ async def gif(ctx):
         top_gifs = None
 
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Gives you fun number facts', description='The number facts this command gives you can be either trivia, date, year, or math. All you need to do is call !numberfacts [factType] [number]')
 async def numberfacts(ctx):
     message_list = ctx.message.content.split()
     factType = message_list[1]
