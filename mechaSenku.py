@@ -200,7 +200,7 @@ async def manga(ctx):
         embed.add_field(name="URL", value=url, inline=False)
         await ctx.send(embed=embed)
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Gets you a meme template')
 async def memetemplate(ctx):
     link = 'https://api.imgflip.com/get_memes'
     f = urllib.request.Request(link, headers={'User-agent': 'Mozilla/5.0'})
@@ -215,7 +215,7 @@ async def memetemplate(ctx):
     embed.set_image(url=meme_image)
     await ctx.send(embed=embed)
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Send you dad jokes')
 async def dadjoke(ctx):
     link = 'https://icanhazdadjoke.com/'
     f = urllib.request.Request(link, headers={'User-agent': 'Our Bot(https://github.com/gbessrour/project-stone)',"Accept":"application/json"})
@@ -226,7 +226,7 @@ async def dadjoke(ctx):
     await ctx.send(joke)
 
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Gets you the gif you want')
 async def gif(ctx):
     
     global apikey
