@@ -283,6 +283,7 @@ async def currency(ctx):
     amount = currency_list[1]
     base = currency_list[2]
     target = currency_list[3]
+    list_url = "https://currency13.p.rapidapi.com/list"
     url = "https://currency13.p.rapidapi.com/convert/"+amount+"/"+base+"/"+target
 
     headers = {
@@ -291,8 +292,20 @@ async def currency(ctx):
         }
 
     response = requests.request("GET", url, headers=headers)
+    list_response = requests.request("GET", list_url, headers=headers)
     data = json.loads(response.content)
-    await ctx.send(amount+" "+base+" is equivalent to "+str(data['amount'])+" "+target+" with the current exchange rate")
+    data_list = json.loads(list_response.content)
+
+    for i in range(0, len(data_list["currencies"])):
+        if base == data_list["currencies"][i]["code"]:
+            baseName = data_list["currencies"][i]["name"]
+            baseSymbol = data_list["currencies"][i]["symbol"]
+
+        if target == data_list["currencies"][i]["code"]:
+            targetName = data_list["currencies"][i]["name"]
+            targetSymbol = data_list["currencies"][i]["symbol"]
+
+    await ctx.send(baseSymbol+""+amount+" "+base+"("+baseName+") is equivalent to "+targetSymbol+str(data['amount'])+" "+target+"("+targetName+") with the current exchange rate")
 
 @bot.event
 async def on_message(message):
