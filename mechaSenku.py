@@ -305,7 +305,10 @@ async def currency(ctx):
             targetName = data_list["currencies"][i]["name"]
             targetSymbol = data_list["currencies"][i]["symbol"]
 
-    await ctx.send(baseSymbol+""+amount+" "+base+"("+baseName+") is equivalent to "+targetSymbol+str(data['amount'])+" "+target+"("+targetName+") with the current exchange rate")
+    result = data['amount']
+    price =  str(round(result,2))
+    await ctx.send(baseSymbol+""+amount+" "+base+"("+baseName+") is equivalent to "+targetSymbol+price+" "+target+"("+targetName+")")
+
 
 @bot.event
 async def on_message(message):
