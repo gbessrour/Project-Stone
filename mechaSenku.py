@@ -277,6 +277,23 @@ async def numberfacts(ctx):
     await ctx.send(randomFact)
     
 
+@bot.command(pass_context=True)
+async def currency(ctx):
+    currency_list = ctx.message.content.split()
+    amount = currency_list[1]
+    base = currency_list[2]
+    target = currency_list[3]
+    url = "https://currency13.p.rapidapi.com/convert/"+amount+"/"+base+"/"+target
+
+    headers = {
+        'x-rapidapi-host': "currency13.p.rapidapi.com",
+        'x-rapidapi-key': "6d91c9f439msh87c30494f5265adp18e8a7jsn6496e29a419a"
+        }
+
+    response = requests.request("GET", url, headers=headers)
+    data = json.loads(response.content)
+    await ctx.send(amount+" "+base+" is equivalent to "+str(data['amount'])+" "+target+" with the current exchange rate")
+
 @bot.event
 async def on_message(message):
     global dad_response
