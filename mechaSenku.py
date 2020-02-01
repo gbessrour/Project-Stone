@@ -107,6 +107,22 @@ async def pubsub(ctx):
         await ctx.send(file=discord.File(os.path.join('Reacts', 'excited_deku.gif')))
     await ctx.send(answer)
 
+# Urban Dictionary
+@bot.command(pass_context=True, brief='Gets you Urban Dictionary definitions so you can keep up with kids these days')
+async def urban(ctx):
+    url = "https://mashape-community-urban-dictionary.p.rapidapi.com/define"
+    userInput = ctx.message.content.split()
+    word = userInput[1]
+    querystring = {"term":word}
+    headers = {
+    'x-rapidapi-host': "mashape-community-urban-dictionary.p.rapidapi.com",
+    'x-rapidapi-key': "5f0790a371mshbde9da487ddc1fdp19ca7cjsn3d32a8881f9b"
+    }
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    data = json.loads(response.content)
+    definition = data['list'][0]['definition']
+    await ctx.send(definition)
+
 # Anime search
 @bot.command(pass_context=True, brief='Does anime queries for you', description='If you call !anime name [anime_name], it will return all the info about that anime.\nIf you call !anime season [season] [optional # of anime], it will return the specified number of anime from that season.')
 async def anime(ctx):
