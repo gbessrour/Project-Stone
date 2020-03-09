@@ -17,7 +17,7 @@ cg = CoinGeckoAPI()
 #Powered by Jikan Unofficial MAL Anime API
 jikan = Jikan()
 
-apikey = "TDI364KJY84L"  # API Key for Tenor GIF API
+apikey = os.environ['apikey']  # API Key for Tenor GIF API
 lmt = 5  # limit on the amount of content retrieved using Tenor GIF API
 
 # Function to convert number into coin side
