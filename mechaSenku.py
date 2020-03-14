@@ -325,6 +325,20 @@ async def currency(ctx):
     price =  str(round(result,2))
     await ctx.send(baseSymbol+""+amount+" "+base+"("+baseName+") is equivalent to "+targetSymbol+price+" "+target+"("+targetName+")")
 
+@bot.command(pass_context=True)
+async def wholesome(ctx):
+    pics_list = ctx.message.content.split()
+    breed = pics_list[1:]
+    listToStr = ' '.join([str(elem) for elem in breed]) 
+    strBreed = listToStr.replace(" ","")
+    url = "http://gofetch.pictures/breeds/?breed="+strBreed
+    response = requests.request("POST", url)
+    data = json.loads(response.content)
+    animal_name = data[strBreed][0]['breed']
+    animal_image = data[strBreed][0]['imageURL']
+    embed = discord.Embed(title=animal_name, value=str(animal_name), inline=False)
+    embed.set_image(url=animal_image)
+    await ctx.send(embed=embed)
 
 @bot.event
 async def on_message(message):
@@ -361,7 +375,7 @@ async def on_message(message):
         dad_response = False
 
     # JoJo Reference?
-    if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower():
+    if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower() or 'stand' in message.content.lower():
         await message.channel.send('Was that a motherfucking JoJo\'s reference??')
         if message.author.id == 386230029169852419:
             await message.channel.send('btw Ghassen, you should watch JoJo\'s')
