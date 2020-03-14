@@ -216,6 +216,7 @@ async def manga(ctx):
         embed.add_field(name="URL", value=url, inline=False)
         await ctx.send(embed=embed)
 
+# Memes
 @bot.command(pass_context=True, brief='Gets you a meme template')
 async def memetemplate(ctx):
     link = 'https://api.imgflip.com/get_memes'
@@ -231,6 +232,7 @@ async def memetemplate(ctx):
     embed.set_image(url=meme_image)
     await ctx.send(embed=embed)
 
+# Dad jokes
 @bot.command(pass_context=True, brief='Send you dad jokes')
 async def dadjoke(ctx):
     link = 'https://icanhazdadjoke.com/'
@@ -241,7 +243,7 @@ async def dadjoke(ctx):
     joke = loaded_data['joke']
     await ctx.send(joke)
 
-
+# Gets gifs
 @bot.command(pass_context=True, brief='Gets you the gif you want')
 async def gif(ctx):
     
@@ -266,7 +268,7 @@ async def gif(ctx):
     else:
         top_gifs = None
 
-
+# Facts about numbers like the nerd you are
 @bot.command(pass_context=True, brief='Gives you fun number facts', description='The number facts this command gives you can be either trivia, date, year, or math. All you need to do is call !numberfacts [factType] [number]')
 async def numberfacts(ctx):
     message_list = ctx.message.content.split()
@@ -292,8 +294,8 @@ async def numberfacts(ctx):
         randomFact = search_number + " is " + data['text']
     await ctx.send(randomFact)
     
-
-@bot.command(pass_context=True)
+# Returns the current exchange rate of currencies
+@bot.command(pass_context=True, brief='Returns the current exchange rate of currencies')
 async def currency(ctx):
     currency_list = ctx.message.content.split()
     amount = currency_list[1]
@@ -325,7 +327,8 @@ async def currency(ctx):
     price =  str(round(result,2))
     await ctx.send(baseSymbol+""+amount+" "+base+"("+baseName+") is equivalent to "+targetSymbol+price+" "+target+"("+targetName+")")
 
-@bot.command(pass_context=True)
+# Gets you dog pics
+@bot.command(pass_context=True, brief='Gets you dog pics from the internet')
 async def wholesome(ctx):
     pics_list = ctx.message.content.split()
     breed = pics_list[1:]
