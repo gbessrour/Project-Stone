@@ -334,7 +334,7 @@ async def wholesome(ctx):
     breed = pics_list[1:]
     listToStr = ' '.join([str(elem) for elem in breed]) 
     strBreed = listToStr.replace(" ","")
-    url = "http://gofetch.pictures/breeds/?breed="+strBreed
+    url = "http://gofetch.pictures:5000/breeds/?breed="+strBreed
     response = requests.request("POST", url)
     data = json.loads(response.content)
     animal_name = data[strBreed][0]['breed']
