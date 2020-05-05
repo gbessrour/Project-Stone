@@ -378,8 +378,10 @@ async def on_message(message):
         dad_response = False
 
     # JoJo Reference?
-    if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower() or 'stand' in message.content.lower():
-        await message.channel.send('Was that a motherfucking JoJo\'s reference??')
+    # if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower() or 'stand' in message.content.lower():
+    for words in ['jojo', 'jojo\'s', 'jojos', 'stand']:
+        if re.search(r'\b' + words + r'\b', message.content.lower()):
+            await message.channel.send('Was that a motherfucking JoJo\'s reference??')
         if message.author.id == 386230029169852419:
             await message.channel.send('btw Ghassen, you should watch JoJo\'s')
     if ('You thought it' in message.content) and ('but' in message.content):
