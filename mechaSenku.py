@@ -387,7 +387,7 @@ async def on_message(message):
         elif re.search(r'\b' + words + r'\b', message.content.lower()):
             await message.channel.send('Was that a motherfucking JoJo\'s reference??')
 
-    if ('You thought it' in message.content) and ('but' in message.content):
+    if ('you thought it' in message.content.lower()) and ('but' in message.content):
         await message.channel.send(file=discord.File(os.path.join('Reacts', 'dio.gif')))
 
     await bot.process_commands(message)
