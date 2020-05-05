@@ -380,10 +380,14 @@ async def on_message(message):
     # JoJo Reference?
     # if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower() or 'stand' in message.content.lower():
     for words in ['jojo', 'jojo\'s', 'jojos', 'stand']:
-        if re.search(r'\b' + words + r'\b', message.content.lower()):
+        if re.search(r'\b' + words + r'\b', message.content.lower()) and  message.author.id == 386230029169852419:
             await message.channel.send('Was that a motherfucking JoJo\'s reference??')
-        if message.author.id == 386230029169852419:
             await message.channel.send('btw Ghassen, you should watch JoJo\'s')
+        
+        elif re.search(r'\b' + words + r'\b', message.content.lower()):
+            await message.channel.send('Was that a motherfucking JoJo\'s reference??')
+        break
+
     if ('You thought it' in message.content) and ('but' in message.content):
         await message.channel.send(file=discord.File(os.path.join('Reacts', 'dio.gif')))
 
