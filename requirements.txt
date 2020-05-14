@@ -7,3 +7,4 @@ jikanpy
 BeautifulSoup4
 asyncio
 youtube_dl
+PyNaCl
