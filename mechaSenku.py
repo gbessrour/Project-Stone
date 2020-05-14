@@ -365,29 +365,37 @@ async def wholesome(ctx):
 #         if(x.server == ctx.message.server):
 #             return await x.disconnect()
 
-async def audio_player_task():
-    while True:
-        play_next_song.clear()
-        current = await songs.get()
-        current.start()
-        await play_next_song.wait()
+# async def audio_player_task():
+#     while True:
+#         play_next_song.clear()
+#         current = await songs.get()
+#         current.start()
+#         await play_next_song.wait()
 
 
-def toggle_next():
-    bot.loop.call_soon_threadsafe(play_next_song.set)
+# def toggle_next():
+#     bot.loop.call_soon_threadsafe(play_next_song.set)
 
 
-@bot.command(pass_context=True)
-async def play(ctx, url):
-    if not bot.is_voice_connected(ctx.message.server):
-        voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
-    else:
-        voice = bot.voice_client_in(ctx.message.server)
+# @bot.command(pass_context=True)
+# async def play(ctx, url):
+#     if not bot.is_voice_connected(ctx.message.server):
+#         voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
+#     else:
+#         voice = bot.voice_client_in(ctx.message.server)
 
-    player = await voice.create_ytdl_player(url, after=toggle_next)
-    await songs.put(player)
+#     player = await voice.create_ytdl_player(url, after=toggle_next)
+#     await songs.put(player)
 
-bot.loop.create_task(audio_player_task())
+# bot.loop.create_task(audio_player_task())
+
+@bot.command()
+async def join(ctx):
+    channel = ctx.author.voice.channel
+    await channel.connect()
+@bot.command()
+async def leave(ctx):
+    await ctx.voice_client.disconnect()
 
 @bot.event
 async def on_message(message):
