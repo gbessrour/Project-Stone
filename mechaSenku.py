@@ -1,6 +1,7 @@
 # Work with Python 3.6
 import discord
 from discord.ext import commands
+from discord.ext.commands import Bot
 import random
 import os
 from pycoingecko import CoinGeckoAPI
