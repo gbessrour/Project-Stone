@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 import urllib
 import json
 import requests
+import asyncio
+import youtube_dl
 
 # Powered by CoinGecko API
 cg = CoinGeckoAPI()
@@ -342,6 +344,22 @@ async def wholesome(ctx):
     embed = discord.Embed(title=animal_name, value=str(animal_name), inline=False)
     embed.set_image(url=animal_image)
     await ctx.send(embed=embed)
+
+# PLays music from Youtube in the voice channel
+@bot.command(pass_context=True, brief='Plays the music that you want from Youtube')
+async def play(ctx):
+    voice = await bot.join_voice_channel(ctx.message.author.voice.voice_channel)
+    args = ctx.message.content.split(" ")
+    betterargs = " ".join(args[1:])
+    player = await voice.create_ytdl_player('https://www.youtube.com/watch?v=' + betterargs)
+    player.start()
+
+# Leaves the voice channel
+@bot.command(pass_context=True)
+async def leavevoice(ctx):
+    for x in bot.voice_clients:
+        if(x.server == ctx.message.server):
+            return await x.disconnect()
 
 @bot.event
 async def on_message(message):
