@@ -377,7 +377,7 @@ def toggle_next():
     bot.loop.call_soon_threadsafe(play_next_song.set)
 
 
-@client.command(pass_context=True)
+@bot.command(pass_context=True)
 async def play(ctx, url):
     if not bot.is_voice_connected(ctx.message.server):
         voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
