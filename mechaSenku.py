@@ -13,7 +13,6 @@ import json
 import requests
 import asyncio
 import youtube_dl
-import PyNaCl
 
 # Powered by CoinGecko API
 cg = CoinGeckoAPI()
