@@ -23,6 +23,9 @@ jikan = Jikan()
 apikey = os.environ['apikey']  # API Key for Tenor GIF API
 lmt = 5  # limit on the amount of content retrieved using Tenor GIF API
 
+
+songs = asyncio.Queue()
+play_next_song = asyncio.Event()
 # Function to convert number into coin side
 def numbers_to_side(argument):
     switcher = {
@@ -346,21 +349,45 @@ async def wholesome(ctx):
     embed.set_image(url=animal_image)
     await ctx.send(embed=embed)
 
-# PLays music from Youtube in the voice channel
-@bot.command(pass_context=True, brief='Plays the music that you want from Youtube')
-async def play(ctx):
-    voice = await bot.join_voice_channel(ctx.message.author.voice.voice_channel)
-    args = ctx.message.content.split(" ")
-    betterargs = " ".join(args[1:])
-    player = await voice.create_ytdl_player('https://www.youtube.com/watch?v=' + betterargs)
-    player.start()
+# # PLays music from Youtube in the voice channel
+# @bot.command(pass_context=True, brief='Plays the music that you want from Youtube')
+# async def play(ctx):
+#     voice = await bot.join_voice_channel(ctx.message.author.voice.voice_channel)
+#     args = ctx.message.content.split(" ")
+#     betterargs = " ".join(args[1:])
+#     player = await voice.create_ytdl_player('https://www.youtube.com/watch?v=' + betterargs)
+#     player.start()
 
-# Leaves the voice channel
-@bot.command(pass_context=True)
-async def leavevoice(ctx):
-    for x in bot.voice_clients:
-        if(x.server == ctx.message.server):
-            return await x.disconnect()
+# # Leaves the voice channel
+# @bot.command(pass_context=True)
+# async def leavevoice(ctx):
+#     for x in bot.voice_clients:
+#         if(x.server == ctx.message.server):
+#             return await x.disconnect()
+
+async def audio_player_task():
+    while True:
+        play_next_song.clear()
+        current = await songs.get()
+        current.start()
+        await play_next_song.wait()
+
+
+def toggle_next():
+    bot.loop.call_soon_threadsafe(play_next_song.set)
+
+
+@client.command(pass_context=True)
+async def play(ctx, url):
+    if not bot.is_voice_connected(ctx.message.server):
+        voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
+    else:
+        voice = bot.voice_client_in(ctx.message.server)
+
+    player = await voice.create_ytdl_player(url, after=toggle_next)
+    await songs.put(player)
+
+bot.loop.create_task(audio_player_task())
 
 @bot.event
 async def on_message(message):
