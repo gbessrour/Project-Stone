@@ -23,9 +23,53 @@ jikan = Jikan()
 apikey = os.environ['apikey']  # API Key for Tenor GIF API
 lmt = 5  # limit on the amount of content retrieved using Tenor GIF API
 
+# Controls youtube_dl
+youtube_dl.utils.bug_reports_message = lambda: ''
 
-songs = asyncio.Queue()
-play_next_song = asyncio.Event()
+ytdl_format_options = {
+    'format': 'bestaudio/best',
+    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
+    'restrictfilenames': True,
+    'noplaylist': True,
+    'nocheckcertificate': True,
+    'ignoreerrors': False,
+    'logtostderr': False,
+    'quiet': True,
+    'no_warnings': True,
+    'default_search': 'auto',
+    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
+}
+
+ffmpeg_options = {
+    'options': '-vn'
+}
+
+ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
+
+class YTDLSource(discord.PCMVolumeTransformer):
+    def __init__(self, source, *, data, volume=0.5):
+        super().__init__(source, volume)
+
+        self.data = data
+
+        self.title = data.get('title')
+        self.url = data.get('url')
+
+    @classmethod
+    async def from_url(cls, url, *, loop=None, stream=False):
+        loop = loop or asyncio.get_event_loop()
+        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
+
+        if 'entries' in data:
+            # take first item from a playlist
+            data = data['entries'][0]
+
+        filename = data['url'] if stream else ytdl.prepare_filename(data)
+        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
+
+# songs = asyncio.Queue()
+# play_next_song = asyncio.Event()
+
 # Function to convert number into coin side
 def numbers_to_side(argument):
     switcher = {
@@ -349,15 +393,6 @@ async def wholesome(ctx):
     embed.set_image(url=animal_image)
     await ctx.send(embed=embed)
 
-# # PLays music from Youtube in the voice channel
-@bot.command(pass_context=True, brief='Plays the music that you want from Youtube')
-async def play(ctx):
-    voice = await bot.join_voice_channel(ctx.message.author.voice.voice_channel)
-    args = ctx.message.content.split(" ")
-    betterargs = " ".join(args[1:])
-    player = await voice.create_ytdl_player('https://www.youtube.com/watch?v=' + betterargs)
-    player.start()
-
 # async def audio_player_task():
 #     while True:
 #         play_next_song.clear()
@@ -382,13 +417,28 @@ async def play(ctx):
 
 # bot.loop.create_task(audio_player_task())
 
+# Joins voice channel of choice
 @bot.command()
 async def join(ctx):
     channel = ctx.author.voice.channel
     await channel.connect()
+
+# Leaves voice channel of choice
 @bot.command()
 async def leave(ctx):
     await ctx.voice_client.disconnect()
+
+# Plays music from Youtube
+@bot.command(pass_context=True)
+async def play(self, ctx, *, url):
+    print(url)
+    server = ctx.message.guild
+    voice_channel = server.voice_client
+
+    async with ctx.typing():
+        player = await YTDLSource.from_url(url, loop=self.bot.loop)
+        ctx.voice_channel.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+    await ctx.send('Now playing: {}'.format(player.title))
 
 @bot.event
 async def on_message(message):
