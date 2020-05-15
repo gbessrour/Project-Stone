@@ -21,6 +21,7 @@ cg = CoinGeckoAPI()
 jikan = Jikan()
 
 apikey = os.environ['apikey']  # API Key for Tenor GIF API
+covidkey = os.environ['covidkey'] # API key for Covid API
 lmt = 5  # limit on the amount of content retrieved using Tenor GIF API
 
 # Controls youtube_dl
@@ -377,6 +378,7 @@ async def currency(ctx):
     price =  str(round(result,2))
     await ctx.send(baseSymbol+""+amount+" "+base+"("+baseName+") is equivalent to "+targetSymbol+price+" "+target+"("+targetName+")")
 
+# Returns the current Covid-19 numbers
 @bot.command(pass_context=True)
 async def covid(ctx):
 
@@ -390,7 +392,7 @@ async def covid(ctx):
 
     headers = {
         'x-rapidapi-host': "covid-19-data.p.rapidapi.com",
-        'x-rapidapi-key': "6d91c9f439msh87c30494f5265adp18e8a7jsn6496e29a419a"
+        'x-rapidapi-key': covidkey
     }
 
     response = requests.request("GET", url, headers=headers, params=querystring)
