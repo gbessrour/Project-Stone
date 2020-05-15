@@ -480,7 +480,7 @@ async def on_message(message):
     # Confusion message
     elif message.content.lower() == 'what' or message.content.lower() == 'wot' or message.content.lower() == 'wat' or message.content.lower() =='nani':
         if message.content.lower() =='nani':
-            rando = random.randint(0,2)
+            rando = random.randint(0,1)
             await message.channel.send(file=discord.File(os.path.join('Reacts', 'nani'+str(rando)+'.gif')))
         else:
             await message.channel.send(message.content)
@@ -505,7 +505,7 @@ async def on_message(message):
     
 
     if message.content.lower() =='lewd':
-        rando = random.randint(0,2)
+        rando = random.randint(0,1)
         await message.channel.send(file=discord.File(os.path.join('Reacts', 'lewd'+str(rando)+'.gif')))
 
     await bot.process_commands(message)
