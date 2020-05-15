@@ -1,6 +1,7 @@
 # Work with Python 3.6
 import discord
 from discord.ext import commands
+from discord.ext.commands import Bot
 import random
 import os
 from pycoingecko import CoinGeckoAPI
@@ -10,6 +11,8 @@ from bs4 import BeautifulSoup
 import urllib
 import json
 import requests
+import asyncio
+import youtube_dl
 
 # Powered by CoinGecko API
 cg = CoinGeckoAPI()
@@ -17,8 +20,55 @@ cg = CoinGeckoAPI()
 #Powered by Jikan Unofficial MAL Anime API
 jikan = Jikan()
 
-apikey = "TDI364KJY84L"  # API Key for Tenor GIF API
+apikey = os.environ['apikey']  # API Key for Tenor GIF API
 lmt = 5  # limit on the amount of content retrieved using Tenor GIF API
+
+# Controls youtube_dl
+youtube_dl.utils.bug_reports_message = lambda: ''
+
+ytdl_format_options = {
+    'format': 'bestaudio/best',
+    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
+    'restrictfilenames': True,
+    'noplaylist': True,
+    'nocheckcertificate': True,
+    'ignoreerrors': False,
+    'logtostderr': False,
+    'quiet': True,
+    'no_warnings': True,
+    'default_search': 'auto',
+    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
+}
+
+ffmpeg_options = {
+    'options': '-vn'
+}
+
+ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
+
+class YTDLSource(discord.PCMVolumeTransformer):
+    def __init__(self, source, *, data, volume=0.5):
+        super().__init__(source, volume)
+
+        self.data = data
+
+        self.title = data.get('title')
+        self.url = data.get('url')
+
+    @classmethod
+    async def from_url(cls, url, *, loop=None, stream=False):
+        loop = loop or asyncio.get_event_loop()
+        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
+
+        if 'entries' in data:
+            # take first item from a playlist
+            data = data['entries'][0]
+
+        filename = data['url'] if stream else ytdl.prepare_filename(data)
+        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
+
+# songs = asyncio.Queue()
+# play_next_song = asyncio.Event()
 
 # Function to convert number into coin side
 def numbers_to_side(argument):
@@ -55,13 +105,13 @@ bot = commands.Bot(command_prefix = '!')
 dad_response = False
 
 # Simple welcome message
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Greeting message')
 async def hello(ctx):
     msg = 'Hello {0.mention}. How can Mecha Senku assist you today?'.format(ctx.message.author)
     await ctx.send(msg)
 
 # Dice roll
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Roll a dice')
 async def dice(ctx):
     dice = random.randint(1, 6)
     filename = "dice " + str(dice) + ".png"
@@ -69,7 +119,7 @@ async def dice(ctx):
     await ctx.send('You rolled ' + str(dice), file=discord.File(dicename))
 
 # Coin flip
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Flip a coin')
 async def coin(ctx):
     coin = random.randint(1,2)
     filename = numbers_to_side(coin) + ".jpg"
@@ -77,7 +127,7 @@ async def coin(ctx):
     await ctx.send('You got ' + numbers_to_side(coin), file=discord.File(coinname))
 
 # Eight ball
-@bot.command(pass_context=True, aliases=['8ball'])
+@bot.command(pass_context=True, aliases=['8ball'], brief='Asks your question to an 8ball')
 async def eight_ball(ctx):
     if ('win' in ctx.message.content) and ('lottery' in ctx.message.content):
         await ctx.send('Statistically, the odds of winning are about 1 in 175 million so I would say no.')
@@ -85,7 +135,7 @@ async def eight_ball(ctx):
         await ctx.send(random.choice(possible_responses))
 
 # Cryptocurrency price
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Checks the price of cryptocurrency')
 async def price(ctx):
     message_list = ctx.message.content.split()
     crypto = message_list[message_list.index('!price') + 1]
@@ -94,7 +144,7 @@ async def price(ctx):
     await ctx.send(crypto +" price is: $" + price[0])
 
 # PubSubs on sale or not
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Checks if pubsubs are on sale or not')
 async def pubsub(ctx):
     req = urllib.request.Request('http://arepublixchickentendersubsonsale.com')
     resp = urllib.request.urlopen(req)
@@ -107,8 +157,24 @@ async def pubsub(ctx):
         await ctx.send(file=discord.File(os.path.join('Reacts', 'excited_deku.gif')))
     await ctx.send(answer)
 
+# Urban Dictionary
+@bot.command(pass_context=True, brief='Gets you Urban Dictionary definitions so you can keep up with kids these days')
+async def urban(ctx):
+    url = "https://mashape-community-urban-dictionary.p.rapidapi.com/define"
+    userInput = ctx.message.content.split()
+    word = userInput[1]
+    querystring = {"term":word}
+    headers = {
+    'x-rapidapi-host': "mashape-community-urban-dictionary.p.rapidapi.com",
+    'x-rapidapi-key': "5f0790a371mshbde9da487ddc1fdp19ca7cjsn3d32a8881f9b"
+    }
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    data = json.loads(response.content)
+    definition = data['list'][0]['definition']
+    await ctx.send(definition)
+
 # Anime search
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Does anime queries for you', description='If you call !anime name [anime_name], it will return all the info about that anime.\nIf you call !anime season [season] [optional # of anime], it will return the specified number of anime from that season.')
 async def anime(ctx):
     anime_list = ctx.message.content.split()
     param = anime_list[anime_list.index('!anime') + 1]
@@ -165,7 +231,7 @@ async def anime(ctx):
             await ctx.send(embed=embed)
 
 # Manga search
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, brief='Does manga queries for you')
 async def manga(ctx):
     manga_list = ctx.message.content.split()
     param = manga_list[manga_list.index('!manga') + 1] 
@@ -200,7 +266,8 @@ async def manga(ctx):
         embed.add_field(name="URL", value=url, inline=False)
         await ctx.send(embed=embed)
 
-@bot.command(pass_context=True)
+# Memes
+@bot.command(pass_context=True, brief='Gets you a meme template')
 async def memetemplate(ctx):
     link = 'https://api.imgflip.com/get_memes'
     f = urllib.request.Request(link, headers={'User-agent': 'Mozilla/5.0'})
@@ -215,7 +282,8 @@ async def memetemplate(ctx):
     embed.set_image(url=meme_image)
     await ctx.send(embed=embed)
 
-@bot.command(pass_context=True)
+# Dad jokes
+@bot.command(pass_context=True, brief='Send you dad jokes')
 async def dadjoke(ctx):
     link = 'https://icanhazdadjoke.com/'
     f = urllib.request.Request(link, headers={'User-agent': 'Our Bot(https://github.com/gbessrour/project-stone)',"Accept":"application/json"})
@@ -225,8 +293,8 @@ async def dadjoke(ctx):
     joke = loaded_data['joke']
     await ctx.send(joke)
 
-
-@bot.command(pass_context=True)
+# Gets gifs
+@bot.command(pass_context=True, brief='Gets you the gif you want')
 async def gif(ctx):
     
     global apikey
@@ -250,8 +318,8 @@ async def gif(ctx):
     else:
         top_gifs = None
 
-
-@bot.command(pass_context=True)
+# Facts about numbers like the nerd you are
+@bot.command(pass_context=True, brief='Gives you fun number facts', description='The number facts this command gives you can be either trivia, date, year, or math. All you need to do is call !numberfacts [factType] [number]')
 async def numberfacts(ctx):
     message_list = ctx.message.content.split()
     factType = message_list[1]
@@ -276,8 +344,8 @@ async def numberfacts(ctx):
         randomFact = search_number + " is " + data['text']
     await ctx.send(randomFact)
     
-
-@bot.command(pass_context=True)
+# Returns the current exchange rate of currencies
+@bot.command(pass_context=True, brief='Returns the current exchange rate of currencies')
 async def currency(ctx):
     currency_list = ctx.message.content.split()
     amount = currency_list[1]
@@ -341,6 +409,53 @@ async def covid(ctx):
     embed.add_field(name="Deaths", value=deaths, inline=False)
     await ctx.send(embed=embed)
 
+# async def audio_player_task():
+#     while True:
+#         play_next_song.clear()
+#         current = await songs.get()
+#         current.start()
+#         await play_next_song.wait()
+
+
+# def toggle_next():
+#     bot.loop.call_soon_threadsafe(play_next_song.set)
+
+
+# @bot.command(pass_context=True)
+# async def play(ctx, url):
+#     if not bot.is_voice_connected(ctx.message.server):
+#         voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
+#     else:
+#         voice = bot.voice_client_in(ctx.message.server)
+
+#     player = await voice.create_ytdl_player(url, after=toggle_next)
+#     await songs.put(player)
+
+# bot.loop.create_task(audio_player_task())
+
+# Joins voice channel of choice
+@bot.command()
+async def join(ctx):
+    channel = ctx.author.voice.channel
+    await channel.connect()
+
+# Leaves voice channel of choice
+@bot.command()
+async def leave(ctx):
+    await ctx.voice_client.disconnect()
+
+# Plays music from Youtube
+@bot.command(pass_context=True)
+async def play(self, ctx, *, url):
+    print(url)
+    server = ctx.message.guild
+    voice_channel = server.voice_client
+
+    async with ctx.typing():
+        player = await YTDLSource.from_url(url, loop=self.bot.loop)
+        ctx.voice_channel.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+    await ctx.send('Now playing: {}'.format(player.title))
+
 @bot.event
 async def on_message(message):
     global dad_response
@@ -377,10 +492,12 @@ async def on_message(message):
         dad_response = False
 
     # JoJo Reference?
-    if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower() or 'stand' in message.content.lower():
-        await message.channel.send('Was that a motherfucking JoJo\'s reference??')
-        if message.author.id == 386230029169852419:
+    # if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower() or 'stand' in message.content.lower():
+    for words in ['jojo', 'jojo\'s', 'jojos', 'stand']:
+        if re.search(r'\b' + words + r'\b', message.content.lower()) and  message.author.id == 386230029169852419:
+            await message.channel.send('Was that a motherfucking JoJo\'s reference??')
             await message.channel.send('btw Ghassen, you should watch JoJo\'s')
+            
     if ('You thought' in message.content) and ('but' in message.content):
         await message.channel.send(file=discord.File(os.path.join('Reacts', 'dio.gif')))
     
