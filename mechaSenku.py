@@ -310,18 +310,35 @@ async def currency(ctx):
     await ctx.send(baseSymbol+""+amount+" "+base+"("+baseName+") is equivalent to "+targetSymbol+price+" "+target+"("+targetName+")")
 
 @bot.command(pass_context=True)
-async def wholesome(ctx):
-    pics_list = ctx.message.content.split()
-    breed = pics_list[1:]
-    listToStr = ' '.join([str(elem) for elem in breed]) 
-    strBreed = listToStr.replace(" ","")
-    url = "http://gofetch.pictures:5000/breeds/?breed="+strBreed
-    response = requests.request("POST", url)
+async def covid(ctx):
+
+    covid_list = ctx.message.content.split()
+    country = covid_list[1:]
+    countryStr = " ".join(country)
+   
+    url = "https://covid-19-data.p.rapidapi.com/country"
+
+    querystring = {"format":"json","name":str(countryStr)}
+
+    headers = {
+        'x-rapidapi-host': "covid-19-data.p.rapidapi.com",
+        'x-rapidapi-key': "6d91c9f439msh87c30494f5265adp18e8a7jsn6496e29a419a"
+    }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
     data = json.loads(response.content)
-    animal_name = data[strBreed][0]['breed']
-    animal_image = data[strBreed][0]['imageURL']
-    embed = discord.Embed(title=animal_name, value=str(animal_name), inline=False)
-    embed.set_image(url=animal_image)
+    
+    countries = data[0]["country"]
+    confirmed = data[0]["confirmed"]
+    recovered = data[0]["recovered"]
+    critical = data[0]["critical"]
+    deaths = data[0]["deaths"]
+    embed = discord.Embed(title=countries, value=str(countries), inline=False)
+    embed.add_field(name="Confirmed Cases", value=confirmed, inline=False)
+    embed.add_field(name="Recovered", value=recovered, inline=False)
+    embed.add_field(name="Critical Cases", value=critical, inline=False)
+    embed.add_field(name="Deaths", value=deaths, inline=False)
     await ctx.send(embed=embed)
 
 @bot.event
@@ -363,7 +380,7 @@ async def on_message(message):
         await message.channel.send('Was that a motherfucking JoJo\'s reference??')
         if message.author.id == 386230029169852419:
             await message.channel.send('btw Ghassen, you should watch JoJo\'s')
-    if ('You thought it' in message.content) and ('but' in message.content):
+    if ('You thought' in message.content) and ('but' in message.content):
         await message.channel.send(file=discord.File(os.path.join('Reacts', 'dio.gif')))
 
     await bot.process_commands(message)
