@@ -483,7 +483,7 @@ class QuickPoll:
         for x, option in enumerate(options):
             description += '\n {} {}'.format(reactions[x], option)
         embed = discord.Embed(title=question, description=''.join(description))
-        react_message = await self.bot.say(embed=embed)
+        react_message = await ctx.send(embed=embed)
         for reaction in reactions[:len(options)]:
             await self.bot.add_reaction(react_message, reaction)
         embed.set_footer(text='Poll ID: {}'.format(react_message.id))
