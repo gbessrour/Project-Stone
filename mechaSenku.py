@@ -487,7 +487,7 @@ class QuickPoll:
         for reaction in reactions[:len(options)]:
             await self.bot.add_reaction(react_message, reaction)
         embed.set_footer(text='Poll ID: {}'.format(react_message.id))
-        await self.bot.edit_message(react_message, embed=embed)
+        await ctx.send(react_message, embed=embed)
 
     @bot.command(pass_context=True)
     async def tally(self, ctx, id):
@@ -516,7 +516,7 @@ class QuickPoll:
 
         output = 'Results of the poll for "{}":\n'.format(embed['title']) + \
                  '\n'.join(['{}: {}'.format(opt_dict[key], tally[key]) for key in tally.keys()])
-        await self.bot.say(output)
+        await ctx.send(output)
 
 @bot.event
 async def on_message(message):
