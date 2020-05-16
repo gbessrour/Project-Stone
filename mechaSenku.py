@@ -468,10 +468,10 @@ class QuickPoll:
     @bot.command(pass_context=True)
     async def quickpoll(self, ctx, question, *options: str):
         if len(options) <= 1:
-            await self.bot.say('You need more than one option to make a poll!')
+            await ctx.send('You need more than one option to make a poll!')
             return
         if len(options) > 10:
-            await self.bot.say('You cannot make a poll for more than 10 things!')
+            await ctx.send('You cannot make a poll for more than 10 things!')
             return
 
         if len(options) == 2 and options[0] == 'yes' and options[1] == 'no':
