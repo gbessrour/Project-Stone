@@ -21,39 +21,7 @@ jikan = Jikan()
 
 token = os.environ['token'] # Bot token
 
-apikey = os.environ['apikey']  # API Key for Tenor GIF API
-
-covidkey = os.environ['covidkey'] # API key for Covid API
-
-lmt = 5  # limit on the amount of content retrieved using Tenor GIF API
-
-# Function to convert number into coin side
-def numbers_to_side(argument):
-    switcher = {
-        1: "heads",
-        2: "tails",
-    }
-    return switcher.get(argument, "nothing")
-
-# 8-ball responses
-possible_responses = [
-    'That is a resounding no',
-    'It is not looking likely',
-    'Too hard to tell',
-    'It is quite possible',
-    'Definitely',
-]
-
-# Greetings
-greetings = [
-    'Hi ',
-    'Hi there ',
-    'Hello ',
-    'Hey ',
-    'Hey there ',
-]
-
-#client = discord.Client()
+apikey = os.environ['apikey']  # API Key for Tenor GIF API covidkey = os.environ['covidkey'] # API key for Covid API lmt = 5  # limit on the amount of content retrieved using Tenor GIF API # Function to convert number into coin side def numbers_to_side(argument): switcher = { 1: "heads", 2: "tails", } return switcher.get(argument, "nothing") # 8-ball responses possible_responses = [ 'That is a resounding no', 'It is not looking likely', 'Too hard to tell', 'It is quite possible', 'Definitely', ] # Greetings greetings = [ 'Hi ', 'Hi there ', 'Hello ', 'Hey ', 'Hey there ', ] #client = discord.Client()
 bot = commands.Bot(command_prefix = '!')
 
 # global variable
@@ -312,8 +280,8 @@ async def numberfacts(ctx):
 async def currency(ctx):
     currency_list = ctx.message.content.split()
     amount = currency_list[1]
-    base = currency_list[2]
-    target = currency_list[3]
+    base = currency_list[2].upper()
+    target = currency_list[3].upper()
     list_url = "https://currency13.p.rapidapi.com/list"
     url = "https://currency13.p.rapidapi.com/convert/"+amount+"/"+base+"/"+target
 
