@@ -12,7 +12,6 @@ import urllib
 import json
 import requests
 import asyncio
-import youtube_dl
 
 # Powered by CoinGecko API
 cg = CoinGeckoAPI()
@@ -23,53 +22,6 @@ jikan = Jikan()
 apikey = os.environ['apikey']  # API Key for Tenor GIF API
 covidkey = os.environ['covidkey'] # API key for Covid API
 lmt = 5  # limit on the amount of content retrieved using Tenor GIF API
-
-# Controls youtube_dl
-youtube_dl.utils.bug_reports_message = lambda: ''
-
-ytdl_format_options = {
-    'format': 'bestaudio/best',
-    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
-    'restrictfilenames': True,
-    'noplaylist': True,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'auto',
-    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
-}
-
-ffmpeg_options = {
-    'options': '-vn'
-}
-
-ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
-
-class YTDLSource(discord.PCMVolumeTransformer):
-    def __init__(self, source, *, data, volume=0.5):
-        super().__init__(source, volume)
-
-        self.data = data
-
-        self.title = data.get('title')
-        self.url = data.get('url')
-
-    @classmethod
-    async def from_url(cls, url, *, loop=None, stream=False):
-        loop = loop or asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
-
-        if 'entries' in data:
-            # take first item from a playlist
-            data = data['entries'][0]
-
-        filename = data['url'] if stream else ytdl.prepare_filename(data)
-        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
-
-# songs = asyncio.Queue()
-# play_next_song = asyncio.Event()
 
 # Function to convert number into coin side
 def numbers_to_side(argument):
@@ -135,6 +87,13 @@ async def eight_ball(ctx):
     else:
         await ctx.send(random.choice(possible_responses))
 
+# Random Number
+@bot.command(pass_context=True, brief='Returns a random number from a selected range')
+async def random(ctx):
+    num_range = ctx.message.content.split()
+    min_val = num_range[1]
+    max_val = num_range[2]
+    await ctx.send(random.randint(min_val, max_val))
 # Cryptocurrency price
 @bot.command(pass_context=True, brief='Checks the price of cryptocurrency')
 async def price(ctx):
@@ -411,30 +370,6 @@ async def covid(ctx):
     embed.add_field(name="Deaths", value=deaths, inline=False)
     await ctx.send(embed=embed)
 
-# async def audio_player_task():
-#     while True:
-#         play_next_song.clear()
-#         current = await songs.get()
-#         current.start()
-#         await play_next_song.wait()
-
-
-# def toggle_next():
-#     bot.loop.call_soon_threadsafe(play_next_song.set)
-
-
-# @bot.command(pass_context=True)
-# async def play(ctx, url):
-#     if not bot.is_voice_connected(ctx.message.server):
-#         voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
-#     else:
-#         voice = bot.voice_client_in(ctx.message.server)
-
-#     player = await voice.create_ytdl_player(url, after=toggle_next)
-#     await songs.put(player)
-
-# bot.loop.create_task(audio_player_task())
-
 # Joins voice channel of choice
 @bot.command()
 async def join(ctx):
@@ -445,18 +380,6 @@ async def join(ctx):
 @bot.command()
 async def leave(ctx):
     await ctx.voice_client.disconnect()
-
-# Plays music from Youtube
-@bot.command(pass_context=True)
-async def play(self, ctx, *, url):
-    print(url)
-    server = ctx.message.guild
-    voice_channel = server.voice_client
-
-    async with ctx.typing():
-        player = await YTDLSource.from_url(url, loop=self.bot.loop)
-        ctx.voice_channel.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
-    await ctx.send('Now playing: {}'.format(player.title))
 
 @bot.event
 async def on_message(message):
