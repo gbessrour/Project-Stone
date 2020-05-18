@@ -19,8 +19,12 @@ cg = CoinGeckoAPI()
 #Powered by Jikan Unofficial MAL Anime API
 jikan = Jikan()
 
+token = os.environ['token'] # Bot token
+
 apikey = os.environ['apikey']  # API Key for Tenor GIF API
+
 covidkey = os.environ['covidkey'] # API key for Covid API
+
 lmt = 5  # limit on the amount of content retrieved using Tenor GIF API
 
 # Function to convert number into coin side
@@ -48,8 +52,6 @@ greetings = [
     'Hey ',
     'Hey there ',
 ]
-
-token = os.environ['token']
 
 #client = discord.Client()
 bot = commands.Bot(command_prefix = '!')
@@ -89,11 +91,12 @@ async def eight_ball(ctx):
 
 # Random Number
 @bot.command(pass_context=True, brief='Returns a random number from a selected range')
-async def random(ctx):
+async def pick(ctx):
     num_range = ctx.message.content.split()
-    min_val = num_range[1]
-    max_val = num_range[2]
+    min_val = int(num_range[1])
+    max_val = int(num_range[2])
     await ctx.send(random.randint(min_val, max_val))
+
 # Cryptocurrency price
 @bot.command(pass_context=True, brief='Checks the price of cryptocurrency')
 async def price(ctx):
@@ -118,7 +121,7 @@ async def pubsub(ctx):
     await ctx.send(answer)
 
 # Urban Dictionary
-@bot.command(pass_context=True, brief='Gets you Urban Dictionary definitions so you can keep up with kids these days')
+@bot.command(pass_context=True, brief='Gets you Urban Dictionary definitions', description='Gets you Urban Dictionary definitions so you can keep up with kids these days')
 async def urban(ctx):
     url = "https://mashape-community-urban-dictionary.p.rapidapi.com/define"
     userInput = ctx.message.content.split()
