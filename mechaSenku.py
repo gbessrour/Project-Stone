@@ -21,7 +21,8 @@ jikan = Jikan()
 
 token = os.environ['token'] # Bot token
 
-apikey = os.environ['apikey']  # API Key for Tenor GIF API covidkey = os.environ['covidkey'] # API key for Covid API 
+apikey = os.environ['apikey']  # API Key for Tenor GIF API 
+covidkey = os.environ['covidkey'] # API key for Covid API 
 lmt = 5  # limit on the amount of content retrieved using Tenor GIF API 
 
 # Function to convert number into coin side 
