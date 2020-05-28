@@ -404,14 +404,14 @@ async def on_message(message):
             await message.channel.send('You\'re welcome, ' + message.author.display_name)
         dad_response = False
 
-    # Anti-Jeremy
-    pic_ext = ['.jpg', '.jpeg', '.png', '.gif']
-    for ext in pic_ext:
-        if message.content.endswith(ext) and message.author.id == 683812156877176913:
-            providedImage = Image.open(message.attachment)
-            providedImage.filename = f"SPOILER_{providedImage.filename}"
-            spoiler = await providedImage.to_file()
-            await message.channel.send(file=spoiler)
+    # # Anti-Jeremy
+    # pic_ext = ['.jpg', '.jpeg', '.png', '.gif']
+    # for ext in pic_ext:
+    #     if message.content.endswith(ext) and message.author.id == 683812156877176913:
+    #         providedImage = Image.open(message.attachment)
+    #         providedImage.filename = f"SPOILER_{providedImage.filename}"
+    #         spoiler = await providedImage.to_file()
+    #         await message.channel.send(file=spoiler)
 
     # JoJo Reference?
     # if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower() or 'stand' in message.content.lower():
