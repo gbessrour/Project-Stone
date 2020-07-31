@@ -1,5 +1,5 @@
 # Work with Python 3.6
-import discord
+import discord.py
 from discord.ext import commands
 from discord.ext.commands import Bot
 import random
@@ -23,7 +23,9 @@ jikan = Jikan()
 token = os.environ['token'] # Bot token
 
 apikey = os.environ['apikey']  # API Key for Tenor GIF API 
-covidkey = os.environ['covidkey'] # API key for Covid API 
+
+covidkey = os.environ['covidkey'] # API key for Covid API
+
 lmt = 5  # limit on the amount of content retrieved using Tenor GIF API 
 
 # Function to convert number into coin side 

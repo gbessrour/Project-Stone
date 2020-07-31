@@ -2,7 +2,7 @@ django
 gunicorn
 django-heroku
 pycoingecko
-discord
+discord.py
 jikanpy
 BeautifulSoup4
 asyncio
