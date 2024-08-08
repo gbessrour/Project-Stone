@@ -1,9 +1,9 @@
-# Work with Python 3.6
+# Imports
+import os
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
-import random
-import os
+from dotenv import load_dotenv
 from pycoingecko import CoinGeckoAPI
 import re
 from jikanpy import Jikan
@@ -14,37 +14,34 @@ import requests
 import asyncio
 from PIL import Image
 
+# Intents and Bot command prefix
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+# Load keys from .env file
+load_dotenv()
+TOKEN = os.getenv('DISCORD_TOKEN')
+covidkey = os.getenv('COVIDKEY')
+tenorkey = os.getenv('TENORKEY')
+
+# limit on the amount of content retrieved using Tenor GIF API
+lmt = 5
+
 # Powered by CoinGecko API
 cg = CoinGeckoAPI()
 
 #Powered by Jikan Unofficial MAL Anime API
 jikan = Jikan()
 
-token = 'NjQ3NTcxMTE3NjE5NTQ0MTI1.G1xlYY.3NEZcnQ4OlUpTHD69HcPkFSMdfG07CoBvSWr3o' # Bot token
-
-apikey = 'TDI364KJY84L'  # API Key for Tenor GIF API 
-
-covidkey = '6d91c9f439msh87c30494f5265adp18e8a7jsn6496e29a419a' # API key for Covid API
-
-lmt = 5  # limit on the amount of content retrieved using Tenor GIF API 
-
-# Function to convert number into coin side 
-def numbers_to_side(argument): 
-    switcher = { 1: "heads", 2: "tails", } 
-    return switcher.get(argument, "nothing") 
-    
-# 8-ball responses
-possible_responses = [ 'That is a resounding no', 'It is not looking likely', 'Too hard to tell', 'It is quite possible', 'Definitely', ] 
+# global variable
+dad_response = False
 
 # Greetings 
 greetings = [ 'Hi ', 'Hi there ', 'Hello ', 'Hey ', 'Hey there ', ] 
 
-client = discord.Client(intents=discord.Intents.default())
-
-bot = commands.Bot(command_prefix = '!')
-
-# global variable
-dad_response = False
+# 8-ball responses
+possible_responses = [ 'That is a resounding no', 'It is not looking likely', 'Too hard to tell', 'It is quite possible', 'Definitely', ] 
 
 # Simple welcome message
 @bot.command(pass_context=True, brief='Greeting message')
@@ -93,6 +90,38 @@ async def price(ctx):
     price =  re.findall(r"\d+\.\d{1,2}", result)
     await ctx.send(crypto +" price is: $" + price[0])
 
+# Function to convert number into coin side 
+def numbers_to_side(argument): 
+    switcher = { 1: "heads", 2: "tails", } 
+    return switcher.get(argument, "nothing") 
+
+# Memes
+@bot.command(pass_context=True, brief='Gets you a meme template')
+async def memetemplate(ctx):
+    link = 'https://api.imgflip.com/get_memes'
+    f = urllib.request.Request(link, headers={'User-agent': 'Mozilla/5.0'})
+    resp = urllib.request.urlopen(f)
+    data = resp.read().decode()
+    loaded_data = json.loads(data)
+    memeSize = len(loaded_data['data']['memes']) - 1
+    randNum = random.randint(0,memeSize)
+    meme_name = loaded_data['data']['memes'][randNum]['name']
+    meme_image = loaded_data['data']['memes'][randNum]['url']
+    embed = discord.Embed(title=meme_name, value=str(meme_name), inline=False)
+    embed.set_image(url=meme_image)
+    await ctx.send(embed=embed)
+
+# Dad jokes
+@bot.command(pass_context=True, brief='Send you dad jokes')
+async def dadjoke(ctx):
+    link = 'https://icanhazdadjoke.com/'
+    f = urllib.request.Request(link, headers={'User-agent': 'Our Bot(https://github.com/gbessrour/project-stone)',"Accept":"application/json"})
+    resp = urllib.request.urlopen(f)
+    data = resp.read().decode()
+    loaded_data = json.loads(data)
+    joke = loaded_data['joke']
+    await ctx.send(joke)
+
 # PubSubs on sale or not
 @bot.command(pass_context=True, brief='Checks if pubsubs are on sale or not')
 async def pubsub(ctx):
@@ -122,6 +151,176 @@ async def urban(ctx):
     data = json.loads(response.content)
     definition = data['list'][0]['definition']
     await ctx.send(definition)
+
+# Some replies to messages such as dad jokes and jojo references
+@bot.event
+async def on_message(message):
+    global dad_response
+    # we do not want the bot to reply to itself
+    if message.author == bot.user:
+        return
+    # Dad Jokes
+    elif (message.content.startswith('I\'m ')) or (message.content.startswith('I am ') or (message.content.startswith('Im '))):
+        if message.content.startswith('I\'m '):
+            dadjoke = message.content.replace('I\'m ', '')
+        elif message.content.startswith('I am '):
+            dadjoke = message.content.replace('I am ', '')
+        elif message.content.startswith('Im '):
+            dadjoke = message.content.replace('Im ', '')
+        msg = random.choice(greetings) + dadjoke + '. I\'m dad!'
+        await message.channel.send(msg)
+
+        dad_response = True
+        
+    # Confusion message
+    elif message.content.lower() == 'what' or message.content.lower() == 'wot' or message.content.lower() == 'wat' or message.content.lower() =='nani':
+        if message.content.lower() =='nani':
+            rando = random.randint(0,1)
+            await message.channel.send(file=discord.File(os.path.join('Reacts', 'nani'+str(rando)+'.gif')))
+        else:
+            await message.channel.send(message.content)
+
+    # Dad joke response
+    elif dad_response == True and message.author != bot.user:
+        if 'fuck' in message.content.lower() or 'no ' in message.content.lower() or message.content.lower() == 'no':
+            await message.channel.send('no u')
+        elif 'thank' in message.content.lower():
+            await message.channel.send('You\'re welcome, ' + message.author.display_name)
+        dad_response = False
+
+    # JoJo Reference?
+    # if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower() or 'stand' in message.content.lower():
+    for words in ['jojo', 'jojo\'s', 'jojos', 'stand']:
+        if re.search(r'\b' + words + r'\b', message.content.lower()) and  message.author.id == 386230029169852419:
+            await message.channel.send('Was that a motherfucking JoJo\'s reference??')
+            await message.channel.send('btw Ghassen, you should watch JoJo\'s')
+            
+    if ('You thought' in message.content) and ('but' in message.content):
+        await message.channel.send(file=discord.File(os.path.join('Reacts', 'dio.gif')))
+    
+
+    if message.content.lower() =='lewd':
+        rando = random.randint(0,1)
+        await message.channel.send(file=discord.File(os.path.join('Reacts', 'lewd'+str(rando)+'.gif')))
+
+    await bot.process_commands(message)
+
+# Returns the current exchange rate of currencies
+@bot.command(pass_context=True, brief='Returns the current exchange rate of currencies')
+async def currency(ctx):
+    currency_list = ctx.message.content.split()
+    amount = currency_list[1]
+    base = currency_list[2].upper()
+    target = currency_list[3].upper()
+    list_url = "https://currency13.p.rapidapi.com/list"
+    url = "https://currency13.p.rapidapi.com/convert/"+amount+"/"+base+"/"+target
+
+    headers = {
+        'x-rapidapi-host': "currency13.p.rapidapi.com",
+        'x-rapidapi-key': "6d91c9f439msh87c30494f5265adp18e8a7jsn6496e29a419a"
+        }
+
+    response = requests.request("GET", url, headers=headers)
+    list_response = requests.request("GET", list_url, headers=headers)
+    data = json.loads(response.content)
+    data_list = json.loads(list_response.content)
+
+    for i in range(0, len(data_list["currencies"])):
+        if base == data_list["currencies"][i]["code"]:
+            baseName = data_list["currencies"][i]["name"]
+            baseSymbol = data_list["currencies"][i]["symbol"]
+
+        if target == data_list["currencies"][i]["code"]:
+            targetName = data_list["currencies"][i]["name"]
+            targetSymbol = data_list["currencies"][i]["symbol"]
+
+    result = data['amount']
+    price =  str(round(result,2))
+    await ctx.send(baseSymbol+""+amount+" "+base+"("+baseName+") is equivalent to "+targetSymbol+price+" "+target+"("+targetName+")")
+
+# Returns the current Covid-19 numbers
+@bot.command(pass_context=True)
+async def covid(ctx):
+
+    covid_list = ctx.message.content.split()
+    country = covid_list[1:]
+    countryStr = " ".join(country)
+   
+    url = "https://covid-19-data.p.rapidapi.com/country"
+
+    querystring = {"format":"json","name":str(countryStr)}
+
+    headers = {
+        'x-rapidapi-host': "covid-19-data.p.rapidapi.com",
+        'x-rapidapi-key': covidkey
+    }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
+    data = json.loads(response.content)
+    
+    countries = data[0]["country"]
+    confirmed = data[0]["confirmed"]
+    recovered = data[0]["recovered"]
+    critical = data[0]["critical"]
+    deaths = data[0]["deaths"]
+    embed = discord.Embed(title=countries, value=str(countries), inline=False)
+    embed.add_field(name="Confirmed Cases", value=confirmed, inline=False)
+    embed.add_field(name="Recovered", value=recovered, inline=False)
+    embed.add_field(name="Critical Cases", value=critical, inline=False)
+    embed.add_field(name="Deaths", value=deaths, inline=False)
+    await ctx.send(embed=embed)
+
+# Gets you the gif you want
+@bot.command(pass_context=True, brief='Gets you the gif you want')
+async def gif(ctx):
+    
+    global tenorkey
+    global lmt
+
+    message_list = ctx.message.content.split()
+    
+    search_term = message_list[1:]
+        
+    # get the top 8 GIFs for the search term
+    r = requests.get("https://api.tenor.com/v1/search?q=%s&key=%s&limit=%s" % (search_term, tenorkey, lmt))
+
+    if r.status_code == 200:
+    # load the GIFs using the urls for the smaller GIF sizes
+        top_gifs = json.loads(r.content)
+        gifArraySize = len( top_gifs['results']) - 1
+        randNum = random.randint(0,gifArraySize)
+
+        randomGif = top_gifs['results'][randNum]['media'][0]['gif']['url']
+        await ctx.send(randomGif)
+    else:
+        top_gifs = None
+
+# Facts about numbers like the nerd you are
+@bot.command(pass_context=True, brief='Gives you fun number facts', description='The number facts this command gives you can be either trivia, date, year, or math. All you need to do is call !numberfacts [factType] [number]')
+async def numberfacts(ctx):
+    message_list = ctx.message.content.split()
+    factType = message_list[1]
+    search_number = message_list[2]
+
+    url = "https://numbersapi.p.rapidapi.com/"+search_number+"/"+factType
+
+    querystring = {"fragment":"true","notfound":"floor","json":"true"}
+
+    headers = {
+        'x-rapidapi-host': "numbersapi.p.rapidapi.com",
+        'x-rapidapi-key': "6d91c9f439msh87c30494f5265adp18e8a7jsn6496e29a419a"
+        }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    data = json.loads(response.content)
+    if factType == 'year':
+        randomFact = "In "+ search_number + ", " + data['text']
+    elif factType == 'date':
+        randomFact = "In " + search_number + "/"+ str(data['year']) +", " + data['text']
+    else:
+        randomFact = search_number + " is " + data['text']
+    await ctx.send(randomFact)
 
 # Anime search
 @bot.command(pass_context=True, brief='Does anime queries for you', description='If you call !anime name [anime_name], it will return all the info about that anime.\nIf you call !anime season [season] [optional # of anime], it will return the specified number of anime from that season.')
@@ -216,223 +415,7 @@ async def manga(ctx):
         embed.add_field(name="URL", value=url, inline=False)
         await ctx.send(embed=embed)
 
-# Memes
-@bot.command(pass_context=True, brief='Gets you a meme template')
-async def memetemplate(ctx):
-    link = 'https://api.imgflip.com/get_memes'
-    f = urllib.request.Request(link, headers={'User-agent': 'Mozilla/5.0'})
-    resp = urllib.request.urlopen(f)
-    data = resp.read().decode()
-    loaded_data = json.loads(data)
-    memeSize = len(loaded_data['data']['memes']) - 1
-    randNum = random.randint(0,memeSize)
-    meme_name = loaded_data['data']['memes'][randNum]['name']
-    meme_image = loaded_data['data']['memes'][randNum]['url']
-    embed = discord.Embed(title=meme_name, value=str(meme_name), inline=False)
-    embed.set_image(url=meme_image)
-    await ctx.send(embed=embed)
-
-# Dad jokes
-@bot.command(pass_context=True, brief='Send you dad jokes')
-async def dadjoke(ctx):
-    link = 'https://icanhazdadjoke.com/'
-    f = urllib.request.Request(link, headers={'User-agent': 'Our Bot(https://github.com/gbessrour/project-stone)',"Accept":"application/json"})
-    resp = urllib.request.urlopen(f)
-    data = resp.read().decode()
-    loaded_data = json.loads(data)
-    joke = loaded_data['joke']
-    await ctx.send(joke)
-
-# Gets gifs
-@bot.command(pass_context=True, brief='Gets you the gif you want')
-async def gif(ctx):
-    
-    global apikey
-    global lmt
-
-    message_list = ctx.message.content.split()
-    
-    search_term = message_list[1:]
-        
-    # get the top 8 GIFs for the search term
-    r = requests.get("https://api.tenor.com/v1/search?q=%s&key=%s&limit=%s" % (search_term, apikey, lmt))
-
-    if r.status_code == 200:
-    # load the GIFs using the urls for the smaller GIF sizes
-        top_gifs = json.loads(r.content)
-        gifArraySize = len( top_gifs['results']) - 1
-        randNum = random.randint(0,gifArraySize)
-
-        randomGif = top_gifs['results'][randNum]['media'][0]['gif']['url']
-        await ctx.send(randomGif)
-    else:
-        top_gifs = None
-
-# Facts about numbers like the nerd you are
-@bot.command(pass_context=True, brief='Gives you fun number facts', description='The number facts this command gives you can be either trivia, date, year, or math. All you need to do is call !numberfacts [factType] [number]')
-async def numberfacts(ctx):
-    message_list = ctx.message.content.split()
-    factType = message_list[1]
-    search_number = message_list[2]
-
-    url = "https://numbersapi.p.rapidapi.com/"+search_number+"/"+factType
-
-    querystring = {"fragment":"true","notfound":"floor","json":"true"}
-
-    headers = {
-        'x-rapidapi-host': "numbersapi.p.rapidapi.com",
-        'x-rapidapi-key': "6d91c9f439msh87c30494f5265adp18e8a7jsn6496e29a419a"
-        }
-
-    response = requests.request("GET", url, headers=headers, params=querystring)
-    data = json.loads(response.content)
-    if factType == 'year':
-        randomFact = "In "+ search_number + ", " + data['text']
-    elif factType == 'date':
-        randomFact = "In " + search_number + "/"+ str(data['year']) +", " + data['text']
-    else:
-        randomFact = search_number + " is " + data['text']
-    await ctx.send(randomFact)
-    
-# Returns the current exchange rate of currencies
-@bot.command(pass_context=True, brief='Returns the current exchange rate of currencies')
-async def currency(ctx):
-    currency_list = ctx.message.content.split()
-    amount = currency_list[1]
-    base = currency_list[2].upper()
-    target = currency_list[3].upper()
-    list_url = "https://currency13.p.rapidapi.com/list"
-    url = "https://currency13.p.rapidapi.com/convert/"+amount+"/"+base+"/"+target
-
-    headers = {
-        'x-rapidapi-host': "currency13.p.rapidapi.com",
-        'x-rapidapi-key': "6d91c9f439msh87c30494f5265adp18e8a7jsn6496e29a419a"
-        }
-
-    response = requests.request("GET", url, headers=headers)
-    list_response = requests.request("GET", list_url, headers=headers)
-    data = json.loads(response.content)
-    data_list = json.loads(list_response.content)
-
-    for i in range(0, len(data_list["currencies"])):
-        if base == data_list["currencies"][i]["code"]:
-            baseName = data_list["currencies"][i]["name"]
-            baseSymbol = data_list["currencies"][i]["symbol"]
-
-        if target == data_list["currencies"][i]["code"]:
-            targetName = data_list["currencies"][i]["name"]
-            targetSymbol = data_list["currencies"][i]["symbol"]
-
-    result = data['amount']
-    price =  str(round(result,2))
-    await ctx.send(baseSymbol+""+amount+" "+base+"("+baseName+") is equivalent to "+targetSymbol+price+" "+target+"("+targetName+")")
-
-# Returns the current Covid-19 numbers
-@bot.command(pass_context=True)
-async def covid(ctx):
-
-    covid_list = ctx.message.content.split()
-    country = covid_list[1:]
-    countryStr = " ".join(country)
-   
-    url = "https://covid-19-data.p.rapidapi.com/country"
-
-    querystring = {"format":"json","name":str(countryStr)}
-
-    headers = {
-        'x-rapidapi-host': "covid-19-data.p.rapidapi.com",
-        'x-rapidapi-key': covidkey
-    }
-
-    response = requests.request("GET", url, headers=headers, params=querystring)
-
-    data = json.loads(response.content)
-    
-    countries = data[0]["country"]
-    confirmed = data[0]["confirmed"]
-    recovered = data[0]["recovered"]
-    critical = data[0]["critical"]
-    deaths = data[0]["deaths"]
-    embed = discord.Embed(title=countries, value=str(countries), inline=False)
-    embed.add_field(name="Confirmed Cases", value=confirmed, inline=False)
-    embed.add_field(name="Recovered", value=recovered, inline=False)
-    embed.add_field(name="Critical Cases", value=critical, inline=False)
-    embed.add_field(name="Deaths", value=deaths, inline=False)
-    await ctx.send(embed=embed)
-
-# Joins voice channel of choice
-@bot.command()
-async def join(ctx):
-    channel = ctx.author.voice.channel
-    await channel.connect()
-
-# Leaves voice channel of choice
-@bot.command()
-async def leave(ctx):
-    await ctx.voice_client.disconnect()
-
-@bot.event
-async def on_message(message):
-    global dad_response
-    # we do not want the bot to reply to itself
-    if message.author == bot.user:
-        return
-    # Dad Jokes
-    elif (message.content.startswith('I\'m ')) or (message.content.startswith('I am ') or (message.content.startswith('Im '))):
-        if message.content.startswith('I\'m '):
-            dadjoke = message.content.replace('I\'m ', '')
-        elif message.content.startswith('I am '):
-            dadjoke = message.content.replace('I am ', '')
-        elif message.content.startswith('Im '):
-            dadjoke = message.content.replace('Im ', '')
-        msg = random.choice(greetings) + dadjoke + '. I\'m dad!'
-        await message.channel.send(msg)
-
-        dad_response = True
-        
-    # Confusion message
-    elif message.content.lower() == 'what' or message.content.lower() == 'wot' or message.content.lower() == 'wat' or message.content.lower() =='nani':
-        if message.content.lower() =='nani':
-            rando = random.randint(0,1)
-            await message.channel.send(file=discord.File(os.path.join('Reacts', 'nani'+str(rando)+'.gif')))
-        else:
-            await message.channel.send(message.content)
-
-    # Dad joke response
-    elif dad_response == True and message.author != bot.user:
-        if 'fuck' in message.content.lower() or 'no ' in message.content.lower() or message.content.lower() == 'no':
-            await message.channel.send('no u')
-        elif 'thank' in message.content.lower():
-            await message.channel.send('You\'re welcome, ' + message.author.display_name)
-        dad_response = False
-
-    # # Anti-Jeremy
-    # pic_ext = ['.jpg', '.jpeg', '.png', '.gif']
-    # for ext in pic_ext:
-    #     if message.content.endswith(ext) and message.author.id == 683812156877176913:
-    #         providedImage = Image.open(message.attachment)
-    #         providedImage.filename = f"SPOILER_{providedImage.filename}"
-    #         spoiler = await providedImage.to_file()
-    #         await message.channel.send(file=spoiler)
-
-    # JoJo Reference?
-    # if 'jojo' in message.content.lower() or 'jojo\'s' in message.content.lower() or 'jojos' in message.content.lower() or 'stand' in message.content.lower():
-    for words in ['jojo', 'jojo\'s', 'jojos', 'stand']:
-        if re.search(r'\b' + words + r'\b', message.content.lower()) and  message.author.id == 386230029169852419:
-            await message.channel.send('Was that a motherfucking JoJo\'s reference??')
-            await message.channel.send('btw Ghassen, you should watch JoJo\'s')
-            
-    if ('You thought' in message.content) and ('but' in message.content):
-        await message.channel.send(file=discord.File(os.path.join('Reacts', 'dio.gif')))
-    
-
-    if message.content.lower() =='lewd':
-        rando = random.randint(0,1)
-        await message.channel.send(file=discord.File(os.path.join('Reacts', 'lewd'+str(rando)+'.gif')))
-
-    await bot.process_commands(message)
-
-
+# Prints when the bot is ready
 @bot.event
 async def on_ready():
     print('Logged in as')
@@ -440,4 +423,4 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-bot.run(token)
+bot.run(TOKEN)
