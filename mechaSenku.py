@@ -20,11 +20,11 @@ cg = CoinGeckoAPI()
 #Powered by Jikan Unofficial MAL Anime API
 jikan = Jikan()
 
-token = os.environ['token'] # Bot token
+token = 'NjQ3NTcxMTE3NjE5NTQ0MTI1.G1xlYY.3NEZcnQ4OlUpTHD69HcPkFSMdfG07CoBvSWr3o' # Bot token
 
-apikey = os.environ['apikey']  # API Key for Tenor GIF API 
+apikey = 'TDI364KJY84L'  # API Key for Tenor GIF API 
 
-covidkey = os.environ['covidkey'] # API key for Covid API
+covidkey = '6d91c9f439msh87c30494f5265adp18e8a7jsn6496e29a419a' # API key for Covid API
 
 lmt = 5  # limit on the amount of content retrieved using Tenor GIF API 
 
@@ -39,7 +39,7 @@ possible_responses = [ 'That is a resounding no', 'It is not looking likely', 'T
 # Greetings 
 greetings = [ 'Hi ', 'Hi there ', 'Hello ', 'Hey ', 'Hey there ', ] 
 
-client = discord.Client()
+client = discord.Client(intents=discord.Intents.default())
 
 bot = commands.Bot(command_prefix = '!')
 
